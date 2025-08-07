@@ -1,10 +1,19 @@
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Landing from './components/Landing'
+import MapApp from './components/MapApp'
 import './App.css'
 
 function App() {
   return (
-    <div className="App">
-      <h1>SirenaAI</h1>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/app" element={<MapApp />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 

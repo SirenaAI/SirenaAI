@@ -16,10 +16,19 @@
     "server:lint": "cd server && npm run lint",
     "client:lint": "cd client && npm run lint"
   },
-  "keywords": ["react", "vite", "express", "nodejs", "fullstack"],
+  "keywords": [
+    "react",
+    "vite",
+    "express",
+    "nodejs",
+    "fullstack"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "ol": "^10.6.1"
   }
 }
