@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import 'ol/ol.css';
-import { Map, View } from 'ol';
-import { Tile as TileLayer } from 'ol/layer';
-import { OSM, TileWMS } from 'ol/source';
-import { fromLonLat } from 'ol/proj';
+import { useEffect, useRef } from 'react'
+import 'ol/ol.css'
+import { Map, View } from 'ol'
+import { Tile as TileLayer } from 'ol/layer'
+import { OSM, TileWMS } from 'ol/source'
+import { fromLonLat } from 'ol/proj'
 
 const FloodMap = () => {
-  const mapRef = useRef();
+  const mapRef = useRef()
 
   useEffect(() => {
     const baseLayer = new TileLayer({
       source: new OSM()
-    });
+    })
 
     const ignLayer = new TileLayer({
       source: new TileWMS({
@@ -26,7 +26,7 @@ const FloodMap = () => {
         transition: 0
       }),
       opacity: 0.7
-    });
+    })
 
     const map = new Map({
       target: mapRef.current,
@@ -35,10 +35,10 @@ const FloodMap = () => {
         center: fromLonLat([-58.3816, -34.6037]), // Buenos Aires
         zoom: 6
       })
-    });
+    })
 
-    return () => map.setTarget(null);
-  }, []);
+    return () => map.setTarget(null)
+  }, [])
 
   return (
     <div ref={mapRef} style={{ 
@@ -46,7 +46,7 @@ const FloodMap = () => {
       height: '100vh',
       flex: 1
     }}></div>
-  );
-};
+  )
+}
 
-export default FloodMap;
+export default FloodMap
