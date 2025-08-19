@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import FloodMap from '../Map'
+import FloodMap from './Map'
 import './MapApp.css'
 
 const MapApp = () => {
