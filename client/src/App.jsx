@@ -24,6 +24,13 @@ function App() {
       } catch (error) {
         console.error('❌ Error al conectar con la base de datos:', error.message)
       }
+
+      try {
+        const respuesta = await api.getInundaciones()
+        console.log(respuesta.data)
+      } catch (error) {
+        console.error('❌ Error al obtener datos de inundaciones:', error.message)
+      }
     }
 
     checkConnections()

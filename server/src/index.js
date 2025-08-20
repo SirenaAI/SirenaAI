@@ -76,6 +76,30 @@ app.get('/api/db-test', async (req, res) => {
   }
 });
 
+// Get all inundaciones data
+app.get('/api/inundaciones', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT * FROM inundaciones');
+    client.release();
+    
+    res.json({
+      status: 'success',
+      data: result.rows,
+      count: result.rows.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Inundaciones query error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch inundaciones data',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
@@ -91,4 +115,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🗄️ Database test: http://localhost:${PORT}/api/db-test`);
+  console.log(`🌊 Inundaciones data: http://localhost:${PORT}/api/inundaciones`);
 });

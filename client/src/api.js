@@ -37,6 +37,10 @@ export const api = {
 
   async dbTest() {
     return this.request('/api/db-test')
+  },
+
+  async getInundaciones() {
+    return this.request('/api/inundaciones')
   }
 }
 
