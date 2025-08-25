@@ -135,3 +135,70 @@
     font-size: 1rem;
   }
 }
+
+.menu {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.menu-button {
+  background: #0077b6;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dropdown {
+  margin-top: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px;
+  width: 240px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.dropdown-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-options button {
+  margin: 5px 0;
+  padding: 10px;
+  background: #0096c7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form input {
+  margin: 5px 0;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.login-form button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #0096c7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.back-button {
+  background: #aaa !important;
+  margin-top: 5px;
+}
