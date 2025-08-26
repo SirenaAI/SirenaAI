@@ -103,20 +103,20 @@ app.get('/api/inundaciones', async (req, res) => {
 // Login endpoint - Authenticate user
 app.post('/api/login', async (req, res) => {
   try {
-    const { usuario, contraseña } = req.body;
+    const { usuario } = req.body;
     
-    if (!usuario || !contraseña) {
+    if (!usuario) {
       return res.status(400).json({
         status: 'error',
-        message: 'Usuario y contraseña son requeridos',
+        message: 'Usuario es requerido',
         timestamp: new Date().toISOString()
       });
     }
 
     const client = await pool.connect();
     const result = await client.query(
-      'SELECT * FROM login WHERE usuario = $1 AND contraseña = $2',
-      [usuario, contraseña]
+      'SELECT * FROM users WHERE usuario = $1',
+      [usuario]
     );
     client.release();
     
@@ -127,15 +127,14 @@ app.post('/api/login', async (req, res) => {
         message: 'Login exitoso',
         user: {
           usuario: result.rows[0].usuario,
-          // No devolvemos la contraseña por seguridad
         },
         timestamp: new Date().toISOString()
       });
     } else {
-      // Usuario no encontrado o credenciales incorrectas
+      // Usuario no encontrado
       res.status(401).json({
         status: 'error',
-        message: 'Credenciales incorrectas',
+        message: 'Usuario no encontrado',
         timestamp: new Date().toISOString()
       });
     }
@@ -154,7 +153,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/users', async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT usuario FROM login'); // Solo devolvemos usuarios, no contraseñas
+    const result = await client.query('SELECT usuario FROM users'); // Solo devolvemos usuarios, no contraseñas
     client.release();
     
     res.json({
@@ -177,12 +176,12 @@ app.get('/api/users', async (req, res) => {
 // Register new user
 app.post('/api/register', async (req, res) => {
   try {
-    const { usuario, contraseña } = req.body;
+    const { usuario } = req.body;
     
-    if (!usuario || !contraseña) {
+    if (!usuario) {
       return res.status(400).json({
         status: 'error',
-        message: 'Usuario y contraseña son requeridos',
+        message: 'Usuario es requerido',
         timestamp: new Date().toISOString()
       });
     }
@@ -191,7 +190,7 @@ app.post('/api/register', async (req, res) => {
     
     // Verificar si el usuario ya existe
     const existingUser = await client.query(
-      'SELECT usuario FROM login WHERE usuario = $1',
+      'SELECT usuario FROM users WHERE usuario = $1',
       [usuario]
     );
     
@@ -206,8 +205,8 @@ app.post('/api/register', async (req, res) => {
 
     // Insertar nuevo usuario
     const result = await client.query(
-      'INSERT INTO login (usuario, contraseña) VALUES ($1, $2) RETURNING usuario',
-      [usuario, contraseña]
+      'INSERT INTO users (usuario) VALUES ($1) RETURNING usuario',
+      [usuario]
     );
     client.release();
     
