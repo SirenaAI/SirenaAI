@@ -100,6 +100,136 @@ app.get('/api/inundaciones', async (req, res) => {
   }
 });
 
+// Login endpoint - Authenticate user
+app.post('/api/login', async (req, res) => {
+  try {
+    const { usuario, contraseña } = req.body;
+    
+    if (!usuario || !contraseña) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Usuario y contraseña son requeridos',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const client = await pool.connect();
+    const result = await client.query(
+      'SELECT * FROM login WHERE usuario = $1 AND contraseña = $2',
+      [usuario, contraseña]
+    );
+    client.release();
+    
+    if (result.rows.length > 0) {
+      // Usuario encontrado - Login exitoso
+      res.json({
+        status: 'success',
+        message: 'Login exitoso',
+        user: {
+          usuario: result.rows[0].usuario,
+          // No devolvemos la contraseña por seguridad
+        },
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      // Usuario no encontrado o credenciales incorrectas
+      res.status(401).json({
+        status: 'error',
+        message: 'Credenciales incorrectas',
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error('Login query error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error en el servidor durante el login',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Get all users (solo para desarrollo/admin)
+app.get('/api/users', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT usuario FROM login'); // Solo devolvemos usuarios, no contraseñas
+    client.release();
+    
+    res.json({
+      status: 'success',
+      data: result.rows,
+      count: result.rows.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Users query error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch users data',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Register new user
+app.post('/api/register', async (req, res) => {
+  try {
+    const { usuario, contraseña } = req.body;
+    
+    if (!usuario || !contraseña) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Usuario y contraseña son requeridos',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    const client = await pool.connect();
+    
+    // Verificar si el usuario ya existe
+    const existingUser = await client.query(
+      'SELECT usuario FROM login WHERE usuario = $1',
+      [usuario]
+    );
+    
+    if (existingUser.rows.length > 0) {
+      client.release();
+      return res.status(409).json({
+        status: 'error',
+        message: 'El usuario ya existe',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Insertar nuevo usuario
+    const result = await client.query(
+      'INSERT INTO login (usuario, contraseña) VALUES ($1, $2) RETURNING usuario',
+      [usuario, contraseña]
+    );
+    client.release();
+    
+    res.status(201).json({
+      status: 'success',
+      message: 'Usuario registrado exitosamente',
+      user: {
+        usuario: result.rows[0].usuario
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Register query error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error en el servidor durante el registro',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
