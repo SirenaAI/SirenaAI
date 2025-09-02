@@ -100,145 +100,91 @@ app.get('/api/inundaciones', async (req, res) => {
   }
 });
 
-// Login endpoint - Authenticate user
-app.post('/api/login', async (req, res) => {
+app.post('/crearusuario', async (req, res) => {
+  
   try {
-    const { usuario } = req.body;
-    
-    if (!usuario) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Usuario es requerido',
-        timestamp: new Date().toISOString()
-      });
+    const { nombre, password } = req.body;
+    if (!nombre || !password) {
+      return res.status(400).json({ error: 'Faltan datos' });
     }
+    
+    const client = new Client(config);
+    await client.connect();
 
-    const client = await pool.connect();
-    const result = await client.query(
-      'SELECT * FROM users WHERE usuario = $1',
-      [usuario]
-    );
-    client.release();
-    
-    if (result.rows.length > 0) {
-      // Usuario encontrado - Login exitoso
-      res.json({
-        status: 'success',
-        message: 'Login exitoso',
-        user: {
-          usuario: result.rows[0].usuario,
-        },
-        timestamp: new Date().toISOString()
-      });
-    } else {
-      // Usuario no encontrado
-      res.status(401).json({
-        status: 'error',
-        message: 'Usuario no encontrado',
-        timestamp: new Date().toISOString()
-      });
-    }
-  } catch (error) {
-    console.error('Login query error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Error en el servidor durante el login',
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Get all users (solo para desarrollo/admin)
-app.get('/api/users', async (req, res) => {
-  try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT usuario FROM users'); // Solo devolvemos usuarios, no contraseñas
-    client.release();
-    
-    res.json({
-      status: 'success',
-      data: result.rows,
-      count: result.rows.length,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Users query error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch users data',
-      error: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// Register new user
-app.post('/api/register', async (req, res) => {
-  try {
-    const { usuario } = req.body;
-    
-    if (!usuario) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Usuario es requerido',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    const client = await pool.connect();
-    
-    // Verificar si el usuario ya existe
-    const existingUser = await client.query(
-      'SELECT usuario FROM users WHERE usuario = $1',
-      [usuario]
-    );
-    
+    const existingUser = await client.query('SELECT id FROM usuario WHERE nombre = $1', [nombre]);
     if (existingUser.rows.length > 0) {
-      client.release();
-      return res.status(409).json({
-        status: 'error',
-        message: 'El usuario ya existe',
-        timestamp: new Date().toISOString()
-      });
+      await client.end();
+      return res.status(409).json({ error: 'El usuario ya existe' });
     }
 
-    // Insertar nuevo usuario
     const result = await client.query(
-      'INSERT INTO users (usuario) VALUES ($1) RETURNING usuario',
-      [usuario]
+      'INSERT INTO usuario (nombre, password) VALUES ($1, $2) RETURNING id, nombre',
+      [nombre, await bcrypt.hash(password, 10)]
     );
-    client.release();
-    
+
+    await client.end();
     res.status(201).json({
-      status: 'success',
-      message: 'Usuario registrado exitosamente',
-      user: {
-        usuario: result.rows[0].usuario
-      },
-      timestamp: new Date().toISOString()
+      message: 'Usuario creado',
+      usuario: result.rows[0]
     });
+
   } catch (error) {
-    console.error('Register query error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Error en el servidor durante el registro',
-      error: error.message,
-      timestamp: new Date().toISOString()
+    console.error('Error al crear usuario:', error);
+    res.status(500).json({ error: error.message });
+  }
+})
+
+app.post('/login', async (req, res) => {
+  try {
+    const { id, password } = req.body;
+    if (!id || !password) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+    
+    const client = new Client(config);
+    await client.connect();
+
+    const userResult = await client.query('SELECT id, nombre, password FROM usuario WHERE id = $1', [id]);
+    
+    if (userResult.rows.length === 0) {
+      await client.end();
+      return res.status(401).json({ error: 'Usuario no encontrado' });
+    }
+
+    const user = userResult.rows[0];
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
+      await client.end();
+      return res.status(401).json({ error: 'Contraseña incorrecta' });
+    }
+
+    await client.end();
+
+    const token = jwt.sign(
+      { 
+        userId: user.id, 
+        nombre: user.nombre 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      message: 'Login exitoso',
+      token: token,
+      usuario: {
+        id: user.id,
+        nombre: user.nombre
+      }
     });
+
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
-
-// Error handler
-app.use((err, req, res, _next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
-});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
