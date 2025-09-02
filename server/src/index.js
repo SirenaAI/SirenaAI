@@ -103,23 +103,23 @@ app.get('/api/inundaciones', async (req, res) => {
 app.post('/crearusuario', async (req, res) => {
   
   try {
-    const { nombre, password } = req.body;
-    if (!nombre || !password) {
+    const { username, password } = req.body;
+    if (!username || !password) {
       return res.status(400).json({ error: 'Faltan datos' });
     }
     
     const client = new Client(config);
     await client.connect();
 
-    const existingUser = await client.query('SELECT id FROM usuario WHERE nombre = $1', [nombre]);
+    const existingUser = await client.query('SELECT username FROM usuario WHERE username = $1', [username]);
     if (existingUser.rows.length > 0) {
       await client.end();
       return res.status(409).json({ error: 'El usuario ya existe' });
     }
 
     const result = await client.query(
-      'INSERT INTO usuario (nombre, password) VALUES ($1, $2) RETURNING id, nombre',
-      [nombre, await bcrypt.hash(password, 10)]
+      'INSERT INTO usuario (username, password) VALUES ($1, $2) RETURNING username',
+      [username, await bcrypt.hash(password, 10)]
     );
 
     await client.end();
@@ -136,15 +136,15 @@ app.post('/crearusuario', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   try {
-    const { id, password } = req.body;
-    if (!id || !password) {
+    const { username, password } = req.body;
+    if (!username || !password) {
       return res.status(400).json({ error: 'Faltan datos' });
     }
     
     const client = new Client(config);
     await client.connect();
 
-    const userResult = await client.query('SELECT id, nombre, password FROM usuario WHERE id = $1', [id]);
+    const userResult = await client.query('SELECT username, password FROM usuario WHERE username = $1', [username]);
     
     if (userResult.rows.length === 0) {
       await client.end();
@@ -163,8 +163,7 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { 
-        userId: user.id, 
-        nombre: user.nombre 
+        username: user.username
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
@@ -174,8 +173,7 @@ app.post('/login', async (req, res) => {
       message: 'Login exitoso',
       token: token,
       usuario: {
-        id: user.id,
-        nombre: user.nombre
+        username: user.username
       }
     });
 
