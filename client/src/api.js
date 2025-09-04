@@ -32,15 +32,29 @@ export const api = {
 
   // Specific API endpoints
   async healthCheck() {
-    return this.request('/api/health')
+    return this.request('/health')
   },
 
   async dbTest() {
-    return this.request('/api/db-test')
+    return this.request('/db-test')
   },
 
   async getInundaciones() {
-    return this.request('/api/inundaciones')
+    return this.request('/inundaciones')
+  },
+
+  async login(username, password) {
+    return this.request('/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    })
+  },
+
+    async crearusuario(username, password) {
+    return this.request('/crearusuario', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    })
   }
 }
 

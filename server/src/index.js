@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pkg from 'pg';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-const { Pool } = pkg;
+const { Pool, Client } = pkg;
 dotenv.config();
 
 // PostgreSQL connection
@@ -17,6 +19,18 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+
+// Database configuration for individual client connections
+const dbConfig = {
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false
+  }
+};
 
 // Test database connection
 pool.on('connect', () => {
@@ -44,7 +58,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ 
     status: 'healthy',
     uptime: process.uptime(),
@@ -53,7 +67,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Database connection test endpoint
-app.get('/api/db-test', async (req, res) => {
+app.get('/db-test', async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query('SELECT NOW() as current_time');
@@ -77,7 +91,7 @@ app.get('/api/db-test', async (req, res) => {
 });
 
 // Get all inundaciones data
-app.get('/api/inundaciones', async (req, res) => {
+app.get('/inundaciones', async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query('SELECT * FROM inundaciones');
@@ -101,28 +115,27 @@ app.get('/api/inundaciones', async (req, res) => {
 });
 
 app.post('/crearusuario', async (req, res) => {
-  
   try {
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: 'Faltan datos' });
     }
     
-    const client = new Client(config);
-    await client.connect();
+    const client = await pool.connect();
 
     const existingUser = await client.query('SELECT username FROM usuario WHERE username = $1', [username]);
     if (existingUser.rows.length > 0) {
-      await client.end();
+      client.release();
       return res.status(409).json({ error: 'El usuario ya existe' });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
     const result = await client.query(
       'INSERT INTO usuario (username, password) VALUES ($1, $2) RETURNING username',
-      [username, await bcrypt.hash(password, 10)]
+      [username, hashedPassword]
     );
 
-    await client.end();
+    client.release();
     res.status(201).json({
       message: 'Usuario creado',
       usuario: result.rows[0]
@@ -132,7 +145,7 @@ app.post('/crearusuario', async (req, res) => {
     console.error('Error al crear usuario:', error);
     res.status(500).json({ error: error.message });
   }
-})
+});
 
 app.post('/login', async (req, res) => {
   try {
@@ -141,13 +154,12 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos' });
     }
     
-    const client = new Client(config);
-    await client.connect();
+    const client = await pool.connect();
 
     const userResult = await client.query('SELECT username, password FROM usuario WHERE username = $1', [username]);
     
     if (userResult.rows.length === 0) {
-      await client.end();
+      client.release();
       return res.status(401).json({ error: 'Usuario no encontrado' });
     }
 
@@ -155,11 +167,11 @@ app.post('/login', async (req, res) => {
     const isValidPassword = await bcrypt.compare(password, user.password);
     
     if (!isValidPassword) {
-      await client.end();
+      client.release();
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
 
-    await client.end();
+    client.release();
 
     const token = jwt.sign(
       { 
@@ -186,7 +198,7 @@ app.post('/login', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🗄️ Database test: http://localhost:${PORT}/api/db-test`);
-  console.log(`🌊 Inundaciones data: http://localhost:${PORT}/api/inundaciones`);
+  console.log(`📋 Health check: http://localhost:${PORT}/health`);
+  console.log(`🗄️ Database test: http://localhost:${PORT}/db-test`);
+  console.log(`🌊 Inundaciones data: http://localhost:${PORT}/inundaciones`);
 });
