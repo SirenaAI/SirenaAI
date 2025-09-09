@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react'
+import { AuthProvider } from './hooks/useAuth.jsx'
 import Landing from './components/Landing'
 import MapApp from './components/MapApp'
+import ProtectedRoute from './components/ProtectedRoute'
+import Navbar from './components/Navbar'
 import api from './api'
 import './App.css'
 
@@ -27,7 +30,7 @@ function App() {
 
       try {
         const respuesta = await api.getInundaciones()
-        console.log(respuesta.data)
+        console.log('✅ Datos de inundaciones:', respuesta.data)
       } catch (error) {
         console.error('❌ Error al obtener datos de inundaciones:', error.message)
       }
@@ -37,14 +40,28 @@ function App() {
   }, [])
 
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/app" element={<MapApp />} />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route 
+              path="/app" 
+              element={
+                <ProtectedRoute requireAuth={true}>
+                  <>
+                    <Navbar />
+                    <div style={{ paddingTop: '60px' }}>
+                      <MapApp />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   )
 }
 

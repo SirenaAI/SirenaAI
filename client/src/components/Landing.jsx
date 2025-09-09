@@ -1,72 +1,39 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth.jsx'
+import Auth from './Auth'
 import './Landing.css'
 
 const Landing = () => {
-  const [showMenu, setShowMenu] = useState(false)
-  const [activeForm, setActiveForm] = useState(null) // "login" | "register" | null
+  const [showAuth, setShowAuth] = useState(false)
+  const { isAuthenticated, user, logout } = useAuth()
+
+  const handleLogout = () => {
+    if (window.confirm('¿Estás seguro que deseas cerrar sesión?')) {
+      logout()
+    }
+  }
 
   return (
     <div className="landing">
       <div className="landing-content">
 
-        {/* 🔽 Menú desplegable */}
+        {/* Menú superior */}
         <div className="menu">
-          <button 
-            className="menu-button" 
-            onClick={() => {
-              setShowMenu(!showMenu)
-              setActiveForm(null) // se resetea si se vuelve a abrir
-            }}
-          >
-            ☰ Menú
-          </button>
-
-          {showMenu && (
-            <div className="dropdown">
-              {/* Opciones */}
-              {!activeForm && (
-                <div className="dropdown-options">
-                  <button onClick={() => setActiveForm("login")}> Login</button>
-                  <button onClick={() => setActiveForm("register")}> Registro</button>
-                </div>
-              )}
-
-              {/* Formulario Login */}
-              {activeForm === "login" && (
-                <form className="login-form">
-                  <h3>Iniciar Sesión</h3>
-                  <input type="text" placeholder="Usuario" />
-                  <input type="password" placeholder="Contraseña" />
-                  <button type="submit">Entrar</button>
-                  <button 
-                    type="button" 
-                    className="back-button" 
-                    onClick={() => setActiveForm(null)}
-                  >
-                    ⬅ Volver
-                  </button>
-                </form>
-              )}
-
-              {/* Formulario Registro */}
-              {activeForm === "register" && (
-                <form className="login-form">
-                  <h3>Registrarse</h3>
-                  <input type="text" placeholder="Nombre de usuario" />
-                  <input type="email" placeholder="Correo electrónico" />
-                  <input type="password" placeholder="Contraseña" />
-                  <button type="submit">Crear cuenta</button>
-                  <button 
-                    type="button" 
-                    className="back-button" 
-                    onClick={() => setActiveForm(null)}
-                  >
-                    ⬅ Volver
-                  </button>
-                </form>
-              )}
+          {isAuthenticated() ? (
+            <div className="user-menu">
+              <span className="welcome-text">Bienvenido, {user?.username}</span>
+              <button className="logout-btn" onClick={handleLogout}>
+                Cerrar Sesión
+              </button>
             </div>
+          ) : (
+            <button 
+              className="menu-button" 
+              onClick={() => setShowAuth(true)}
+            >
+              Iniciar Sesión
+            </button>
           )}
         </div>
 
@@ -78,9 +45,18 @@ const Landing = () => {
             Monitorea en tiempo real las condiciones hídricas y recibe alertas tempranas 
             sobre riesgos de inundación en tu área.
           </p>
-          <Link to="/app" className="cta-button">
-            Acceder al Mapa
-          </Link>
+          {isAuthenticated() ? (
+            <Link to="/app" className="cta-button">
+              Acceder al Mapa
+            </Link>
+          ) : (
+            <button 
+              className="cta-button" 
+              onClick={() => setShowAuth(true)}
+            >
+              Iniciar Sesión para Acceder
+            </button>
+          )}
         </div>
         
         {/* Features */}
@@ -106,6 +82,9 @@ const Landing = () => {
         </div>
 
       </div>
+
+      {/* Modal de autenticación */}
+      {showAuth && <Auth onClose={() => setShowAuth(false)} />}
     </div>
   )
 }

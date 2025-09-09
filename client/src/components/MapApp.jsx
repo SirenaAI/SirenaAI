@@ -7,9 +7,9 @@ const MapApp = () => {
     <div className="map-app">
       <header className="map-header">
         <Link to="/" className="back-button">
-          ← Volver al Inicio
+          ← Inicio
         </Link>
-        <h1>Sirena - Monitoreo de Inundaciones</h1>
+        <h1>Monitoreo de Inundaciones</h1>
       </header>
       <div className="map-container">
         <FloodMap />

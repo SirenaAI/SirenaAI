@@ -8,9 +8,13 @@ export const api = {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`
     
+    // Obtener token del localStorage si existe
+    const token = localStorage.getItem('token')
+    
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
@@ -19,8 +23,25 @@ export const api = {
     try {
       const response = await fetch(url, config)
       
+      // Si la respuesta es 401 (no autorizado), limpiar el token
+      if (response.status === 401) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        // Recargar la página para resetear el estado de autenticación
+        window.location.reload()
+        return
+      }
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text()
+        let errorMessage
+        try {
+          const errorJson = JSON.parse(errorText)
+          errorMessage = errorJson.error || errorJson.message || `HTTP error! status: ${response.status}`
+        } catch {
+          errorMessage = errorText || `HTTP error! status: ${response.status}`
+        }
+        throw new Error(errorMessage)
       }
       
       return await response.json()

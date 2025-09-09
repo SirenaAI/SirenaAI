@@ -143,62 +143,52 @@
 }
 
 .menu-button {
-  background: #0077b6;
+  background: rgba(255, 255, 255, 0.2);
   color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
   cursor: pointer;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
-.dropdown {
-  margin-top: 10px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 15px;
-  width: 240px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+.menu-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
-.dropdown-options {
+.user-menu {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.dropdown-options button {
-  margin: 5px 0;
-  padding: 10px;
-  background: #0096c7;
+.welcome-text {
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.logout-btn {
+  background: #ff6b6b;
   color: white;
   border: none;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
   cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.login-form input {
-  margin: 5px 0;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.login-form button {
-  margin-top: 10px;
-  padding: 10px;
-  background: #0096c7;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.back-button {
-  background: #aaa !important;
-  margin-top: 5px;
+.logout-btn:hover {
+  background: #ff5252;
+  transform: translateY(-1px);
 }
