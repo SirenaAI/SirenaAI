@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import FloodMap from './Map'
+import MapLegend from './MapLegend'
 import './MapApp.css'
 
 const MapApp = () => {
@@ -13,6 +14,7 @@ const MapApp = () => {
       </header>
       <div className="map-container">
         <FloodMap />
+        <MapLegend />
       </div>
     </div>
   )

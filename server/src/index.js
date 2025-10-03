@@ -94,7 +94,7 @@ app.get('/db-test', async (req, res) => {
 app.get('/inundaciones', async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT * FROM inundaciones');
+    const result = await client.query('SELECT * FROM inundaciones ORDER BY id');
     client.release();
     
     res.json({
