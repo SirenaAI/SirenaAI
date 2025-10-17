@@ -108,6 +108,45 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Función de login con Google
+  const loginWithGoogle = async (credential) => {
+    try {
+      setError(null)
+      setLoading(true)
+      
+      const response = await api.loginWithGoogle(credential)
+      
+      if (response.token && response.usuario) {
+        const userToken = response.token
+        const userData = response.usuario
+        
+        // Guardar en localStorage
+        localStorage.setItem('token', userToken)
+        localStorage.setItem('user', JSON.stringify(userData))
+        
+        // Actualizar estado
+        setToken(userToken)
+        setUser(userData)
+        
+        return { success: true, message: response.message }
+      } else {
+        throw new Error('Respuesta inválida del servidor')
+      }
+    } catch (error) {
+      console.error('Error en login con Google:', error)
+      const errorMessage = error.message.includes('401') 
+        ? 'Error de autenticación con Google' 
+        : error.message.includes('409')
+        ? 'Error al crear cuenta con Google'
+        : 'Error de conexión con el servidor'
+      
+      setError(errorMessage)
+      return { success: false, error: errorMessage }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Función de logout
   const logout = () => {
     localStorage.removeItem('token')
@@ -129,6 +168,7 @@ export const AuthProvider = ({ children }) => {
     error,
     login,
     register,
+    loginWithGoogle,
     logout,
     isAuthenticated,
     setError

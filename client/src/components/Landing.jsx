@@ -22,7 +22,8 @@ const Landing = () => {
         <div className="menu">
           {isAuthenticated() ? (
             <div className="user-menu">
-              <span className="welcome-text">Bienvenido, {user?.username}</span>
+              {console.log(user)}
+              <span className="welcome-text">Bienvenido, {user?.nombre || user?.username}</span>
               <button className="logout-btn" onClick={handleLogout}>
                 Cerrar Sesión
               </button>

@@ -23,11 +23,12 @@ export const api = {
     try {
       const response = await fetch(url, config)
       
-      // Si la respuesta es 401 (no autorizado), limpiar el token
-      if (response.status === 401) {
+      // Si la respuesta es 401 Y hay un token (usuario autenticado previamente)
+      // entonces el token expiró, limpiar y recargar
+      if (response.status === 401 && token && endpoint !== '/login' && endpoint !== '/crearusuario') {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
-        // Recargar la página para resetear el estado de autenticación
+        // Solo recargar si era un usuario autenticado cuyo token expiró
         window.location.reload()
         return
       }
@@ -50,8 +51,6 @@ export const api = {
       throw error
     }
   },
-
-  // Specific API endpoints
   async healthCheck() {
     return this.request('/health')
   },
@@ -71,7 +70,16 @@ export const api = {
     })
   },
 
-    async crearusuario(username, password) {
+  async loginWithGoogle(credential) {
+    let respuesta = await this.request('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ credential })
+    })
+    console.log(respuesta);
+    return respuesta
+  },
+
+  async crearusuario(username, password) {
     return this.request('/crearusuario', {
       method: 'POST',
       body: JSON.stringify({ username, password })

@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
 import './Auth.css'
 
 const Auth = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true)
+  const [showGoogleLink, setShowGoogleLink] = useState(false)
+  const [pendingGoogleData, setPendingGoogleData] = useState(null)
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -12,7 +14,70 @@ const Auth = ({ onClose }) => {
   const [localError, setLocalError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const { login, register, loading, error } = useAuth()
+  const { login, register, loginWithGoogle, loading, error } = useAuth()
+
+  // Cargar Google Identity Services
+  useEffect(() => {
+    const loadGoogleScript = () => {
+      if (window.google) return
+
+      const script = document.createElement('script')
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.defer = true
+      script.onload = initializeGoogleSignIn
+      document.head.appendChild(script)
+    }
+
+    const initializeGoogleSignIn = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: handleGoogleSignIn,
+          auto_select: false,
+          cancel_on_tap_outside: false
+        })
+      }
+    }
+
+    loadGoogleScript()
+  }, [])
+
+  const handleGoogleSignIn = async (response) => {
+    try {
+      setLocalError('')
+      
+      // Login directo con Google - ahora automáticamente crea la cuenta
+      const result = await loginWithGoogle(response.credential)
+      
+      if (result.success) {
+        setSuccess('¡Login con Google exitoso!')
+        setTimeout(() => {
+          onClose && onClose()
+        }, 1500)
+      }
+    } catch (err) {
+      setLocalError('Error al procesar login con Google')
+    }
+  }
+
+  const renderGoogleButton = () => {
+    useEffect(() => {
+      if (window.google && document.getElementById('google-signin-button')) {
+        window.google.accounts.id.renderButton(
+          document.getElementById('google-signin-button'),
+          {
+            theme: 'outline',
+            size: 'large',
+            width: '100%',
+            text: isLogin ? 'signin_with' : 'signup_with'
+          }
+        )
+      }
+    }, [isLogin])
+
+    return <div id="google-signin-button"></div>
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -20,7 +85,6 @@ const Auth = ({ onClose }) => {
       ...prev,
       [name]: value
     }))
-    // Limpiar errores cuando el usuario empiece a escribir
     setLocalError('')
     setSuccess('')
   }
@@ -62,7 +126,7 @@ const Auth = ({ onClose }) => {
       } else {
         const result = await register(formData.username, formData.password)
         if (result.success) {
-          setSuccess('¡Usuario creado exitosamente! Ahora puedes iniciar sesión.')
+          setSuccess('¡Usuario creado exitosamente!')
           setTimeout(() => {
             setIsLogin(true)
             setFormData({
@@ -94,7 +158,9 @@ const Auth = ({ onClose }) => {
     <div className="auth-overlay">
       <div className="auth-container">
         <div className="auth-header">
-          <h2>{isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</h2>
+          <h2>
+            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+          </h2>
           {onClose && (
             <button className="close-button" onClick={onClose}>
               ×
@@ -161,9 +227,18 @@ const Auth = ({ onClose }) => {
             className="submit-button"
             disabled={loading}
           >
-            {loading ? 'Procesando...' : (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
+            {loading ? 'Procesando...' : 
+             (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
           </button>
         </form>
+
+        {/* Google Sign-In Button */}
+        <div className="google-signin-section">
+          <div className="divider">
+            <span>o</span>
+          </div>
+          {renderGoogleButton()}
+        </div>
 
         <div className="auth-switch">
           <p>

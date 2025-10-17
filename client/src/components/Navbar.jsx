@@ -25,7 +25,7 @@ const Navbar = () => {
         <div className="navbar-user">
           <div className="user-info">
             <span className="user-icon">👤</span>
-            <span className="username">{user?.username}</span>
+            <span className="username">{user?.nombre || user?.username}</span>
           </div>
           <button className="logout-button" onClick={handleLogout}>
             Cerrar Sesión
