@@ -79,10 +79,10 @@ export const api = {
     return respuesta
   },
 
-  async crearusuario(username, password) {
+  async crearusuario(username, email, nombre, password) {
     return this.request('/crearusuario', {
       method: 'POST',
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, email, nombre, password })
     })
   }
 }

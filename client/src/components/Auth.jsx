@@ -8,6 +8,8 @@ const Auth = ({ onClose }) => {
   const [pendingGoogleData, setPendingGoogleData] = useState(null)
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
+    nombre: '',
     password: '',
     confirmPassword: ''
   })
@@ -94,6 +96,24 @@ const Auth = ({ onClose }) => {
       setLocalError('El nombre de usuario es requerido')
       return false
     }
+    
+    // Validaciones adicionales para registro
+    if (!isLogin) {
+      if (!formData.email.trim()) {
+        setLocalError('El email es requerido')
+        return false
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        setLocalError('Por favor ingresa un email válido')
+        return false
+      }
+      if (!formData.nombre.trim()) {
+        setLocalError('El nombre completo es requerido')
+        return false
+      }
+    }
+    
     if (!formData.password.trim()) {
       setLocalError('La contraseña es requerida')
       return false
@@ -124,13 +144,15 @@ const Auth = ({ onClose }) => {
           }, 1500)
         }
       } else {
-        const result = await register(formData.username, formData.password)
+        const result = await register(formData.username, formData.email, formData.nombre, formData.password)
         if (result.success) {
           setSuccess('¡Usuario creado exitosamente!')
           setTimeout(() => {
             setIsLogin(true)
             setFormData({
               username: formData.username,
+              email: '',
+              nombre: '',
               password: '',
               confirmPassword: ''
             })
@@ -147,6 +169,8 @@ const Auth = ({ onClose }) => {
     setIsLogin(!isLogin)
     setFormData({
       username: '',
+      email: '',
+      nombre: '',
       password: '',
       confirmPassword: ''
     })
@@ -181,6 +205,36 @@ const Auth = ({ onClose }) => {
               disabled={loading}
             />
           </div>
+
+          {!isLogin && (
+            <>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Ingresa tu email"
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="nombre">Nombre completo</label>
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  placeholder="Ingresa tu nombre completo"
+                  disabled={loading}
+                />
+              </div>
+            </>
+          )}
 
           <div className="form-group">
             <label htmlFor="password">Contraseña</label>

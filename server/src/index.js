@@ -120,28 +120,34 @@ app.get('/inundaciones', async (req, res) => {
 
 app.post('/crearusuario', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Faltan datos' });
+    const { username, email, nombre, password } = req.body;
+    if (!username || !email || !nombre || !password) {
+      return res.status(400).json({ error: 'Faltan datos requeridos (username, email, nombre, password)' });
     }
     
     const client = await pool.connect();
 
-    const existingUser = await client.query('SELECT username FROM usuario WHERE username = $1', [username]);
+    // Verificar si ya existe el usuario o email
+    const existingUser = await client.query(
+      'SELECT username FROM usuario WHERE username = $1 OR email = $2', 
+      [username, email]
+    );
     if (existingUser.rows.length > 0) {
       client.release();
-      return res.status(409).json({ error: 'El usuario ya existe' });
+      return res.status(409).json({ error: 'El usuario o email ya existe' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await client.query(
-      'INSERT INTO usuario (username, password) VALUES ($1, $2) RETURNING username',
-      [username, hashedPassword]
+      `INSERT INTO usuario (username, email, nombre, password, fecha_creacion, ultimo_login) 
+       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+       RETURNING username, email, nombre`,
+      [username, email, nombre, hashedPassword]
     );
 
     client.release();
     res.status(201).json({
-      message: 'Usuario creado',
+      message: 'Usuario creado exitosamente',
       usuario: result.rows[0]
     });
 
