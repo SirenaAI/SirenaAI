@@ -15,24 +15,38 @@ const Auth = ({ onClose }) => {
   })
   const [localError, setLocalError] = useState('')
   const [success, setSuccess] = useState('')
+  const [googleLoaded, setGoogleLoaded] = useState(false)
 
   const { login, register, loginWithGoogle, loading, error } = useAuth()
 
   // Cargar Google Identity Services
   useEffect(() => {
     const loadGoogleScript = () => {
-      if (window.google) return
+      // Si ya está cargado, solo marcarlo como listo
+      if (window.google && window.google.accounts) {
+        setGoogleLoaded(true)
+        initializeGoogleSignIn()
+        return
+      }
+
+      // Si ya existe el script, no lo agregues de nuevo
+      if (document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+        return
+      }
 
       const script = document.createElement('script')
       script.src = 'https://accounts.google.com/gsi/client'
       script.async = true
       script.defer = true
-      script.onload = initializeGoogleSignIn
+      script.onload = () => {
+        setGoogleLoaded(true)
+        initializeGoogleSignIn()
+      }
       document.head.appendChild(script)
     }
 
     const initializeGoogleSignIn = () => {
-      if (window.google) {
+      if (window.google && window.google.accounts) {
         window.google.accounts.id.initialize({
           client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
           callback: handleGoogleSignIn,
@@ -63,11 +77,17 @@ const Auth = ({ onClose }) => {
     }
   }
 
-  const renderGoogleButton = () => {
-    useEffect(() => {
-      if (window.google && document.getElementById('google-signin-button')) {
+  // Renderizar botón de Google cuando esté listo
+  useEffect(() => {
+    if (googleLoaded && window.google && window.google.accounts) {
+      const buttonDiv = document.getElementById('google-signin-button')
+      if (buttonDiv) {
+        // Limpiar el contenido anterior
+        buttonDiv.innerHTML = ''
+        
+        // Renderizar el botón
         window.google.accounts.id.renderButton(
-          document.getElementById('google-signin-button'),
+          buttonDiv,
           {
             theme: 'outline',
             size: 'large',
@@ -76,10 +96,8 @@ const Auth = ({ onClose }) => {
           }
         )
       }
-    }, [isLogin])
-
-    return <div id="google-signin-button"></div>
-  }
+    }
+  }, [googleLoaded, isLogin])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -291,7 +309,7 @@ const Auth = ({ onClose }) => {
           <div className="divider">
             <span>o</span>
           </div>
-          {renderGoogleButton()}
+          <div id="google-signin-button"></div>
         </div>
 
         <div className="auth-switch">
