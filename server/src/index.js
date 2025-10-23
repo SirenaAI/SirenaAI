@@ -7,24 +7,34 @@ import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 
 const { Pool, Client } = pkg;
-dotenv.config({ path: '../.env' });
+dotenv.config();
 
 // Configurar Google OAuth client
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // PostgreSQL connection
-const connectionString = `postgres://${process.env.PGUSER}:${process.env.PGPASSWORD}@${process.env.PGHOST}/${process.env.PGDATABASE}?sslmode=require`;
-console.log('Connection string:', connectionString);
-
 const pool = new Pool({
-  connectionString,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
   ssl: {
+    require: true,
     rejectUnauthorized: false
   }
 });
 
 // Database configuration for individual client connections
-const dbConfig = {};
+const dbConfig = {
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false
+  }
+};
 
 // Test database connection
 pool.on('connect', () => {
@@ -34,29 +44,6 @@ pool.on('connect', () => {
 pool.on('error', (err) => {
   console.error('❌ PostgreSQL connection error:', err);
 });
-
-// Handle uncaught promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled promise rejection:', err);
-  // Don't exit the process
-});
-
-// Handle process exit
-process.on('exit', (code) => {
-  console.log(`Process exit with code: ${code}`);
-});
-
-// Handle SIGINT
-process.on('SIGINT', () => {
-  console.log('Received SIGINT. Closing server gracefully...');
-  pool.end(() => {
-    console.log('Database pool closed.');
-    process.exit(0);
-  });
-});
-
-// Keep the process alive
-process.stdin.resume();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
