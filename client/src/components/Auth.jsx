@@ -6,6 +6,7 @@ const Auth = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true)
   const [showGoogleLink, setShowGoogleLink] = useState(false)
   const [pendingGoogleData, setPendingGoogleData] = useState(null)
+  const [googleLoaded, setGoogleLoaded] = useState(false)
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -21,29 +22,61 @@ const Auth = ({ onClose }) => {
   // Cargar Google Identity Services
   useEffect(() => {
     const loadGoogleScript = () => {
-      if (window.google) return
+      // Si ya está cargado, solo marcarlo
+      if (window.google && window.google.accounts) {
+        setGoogleLoaded(true)
+        return
+      }
 
       const script = document.createElement('script')
       script.src = 'https://accounts.google.com/gsi/client'
       script.async = true
       script.defer = true
-      script.onload = initializeGoogleSignIn
-      document.head.appendChild(script)
-    }
-
-    const initializeGoogleSignIn = () => {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-          callback: handleGoogleSignIn,
-          auto_select: false,
-          cancel_on_tap_outside: false
-        })
+      script.onload = () => {
+        if (window.google && window.google.accounts) {
+          setGoogleLoaded(true)
+        }
       }
+      document.head.appendChild(script)
     }
 
     loadGoogleScript()
   }, [])
+
+  // Inicializar Google cuando el script esté listo
+  useEffect(() => {
+    if (!googleLoaded) return
+
+    if (window.google && window.google.accounts) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleSignIn,
+        auto_select: false,
+        cancel_on_tap_outside: false
+      })
+    }
+  }, [googleLoaded])
+
+  // Renderizar botón cuando Google esté listo y cuando cambie isLogin
+  useEffect(() => {
+    if (!googleLoaded) return
+
+    const buttonDiv = document.getElementById('google-signin-button')
+    if (window.google && window.google.accounts && buttonDiv) {
+      // Limpiar el contenedor antes de renderizar
+      buttonDiv.innerHTML = ''
+      
+      window.google.accounts.id.renderButton(
+        buttonDiv,
+        {
+          theme: 'outline',
+          size: 'large',
+          width: '100%',
+          text: isLogin ? 'signin_with' : 'signup_with'
+        }
+      )
+    }
+  }, [googleLoaded, isLogin])
 
   const handleGoogleSignIn = async (response) => {
     try {
@@ -61,24 +94,6 @@ const Auth = ({ onClose }) => {
     } catch (err) {
       setLocalError('Error al procesar login con Google')
     }
-  }
-
-  const renderGoogleButton = () => {
-    useEffect(() => {
-      if (window.google && document.getElementById('google-signin-button')) {
-        window.google.accounts.id.renderButton(
-          document.getElementById('google-signin-button'),
-          {
-            theme: 'outline',
-            size: 'large',
-            width: '100%',
-            text: isLogin ? 'signin_with' : 'signup_with'
-          }
-        )
-      }
-    }, [isLogin])
-
-    return <div id="google-signin-button"></div>
   }
 
   const handleInputChange = (e) => {
@@ -291,7 +306,7 @@ const Auth = ({ onClose }) => {
           <div className="divider">
             <span>o</span>
           </div>
-          {renderGoogleButton()}
+          <div id="google-signin-button"></div>
         </div>
 
         <div className="auth-switch">
