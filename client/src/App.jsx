@@ -3,8 +3,8 @@ import { useEffect } from 'react'
 import { AuthProvider } from './hooks/useAuth.jsx'
 import Landing from './components/Landing'
 import MapApp from './components/MapApp'
+import ContactPage from './components/ContactPage'
 import ProtectedRoute from './components/ProtectedRoute'
-import Navbar from './components/Navbar'
 import api from './api'
 import './App.css'
 
@@ -45,16 +45,12 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/contacto" element={<ContactPage />} />
             <Route 
               path="/app" 
               element={
                 <ProtectedRoute requireAuth={true}>
-                  <>
-                    <Navbar />
-                    <div style={{ paddingTop: '60px' }}>
-                      <MapApp />
-                    </div>
-                  </>
+                  <MapApp />
                 </ProtectedRoute>
               } 
             />

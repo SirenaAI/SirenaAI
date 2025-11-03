@@ -1,0 +1,135 @@
+.contact-page {
+  min-height: 100vh;
+  background-color: var(--sirena-lightest);
+}
+
+.contact-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 112px;
+  padding: 50px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.contact-banner {
+  width: 575px;
+  height: 850px;
+  background-color: var(--sirena-dark);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
+.contact-banner h1 {
+  color: var(--sirena-white);
+  text-align: center;
+}
+
+.contact-form-section {
+  width: 640px;
+  height: 850px;
+  background-color: var(--sirena-lightest);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  padding: 20px;
+}
+
+.contact-form-section h2 {
+  color: var(--sirena-dark);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  width: 100%;
+}
+
+.contact-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.contact-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid var(--sirena-border-light);
+  border-radius: var(--radius-md);
+  background-color: var(--sirena-white);
+  resize: vertical;
+  font-family: var(--font-family);
+  transition: var(--transition-base);
+}
+
+.contact-textarea:focus {
+  outline: none;
+  border-color: var(--sirena-primary);
+  box-shadow: 0 0 0 3px rgba(88, 146, 157, 0.1);
+}
+
+.contact-textarea::placeholder {
+  color: var(--sirena-border-light);
+}
+
+.contact-submit {
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .contact-content {
+    padding: 40px;
+    gap: 60px;
+  }
+  
+  .contact-banner {
+    width: 450px;
+    height: 700px;
+  }
+  
+  .contact-form-section {
+    width: 500px;
+    height: 700px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-content {
+    flex-direction: column;
+    padding: 30px;
+    gap: 40px;
+  }
+  
+  .contact-banner {
+    width: 100%;
+    height: 400px;
+  }
+  
+  .contact-form-section {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-content {
+    padding: 20px;
+  }
+  
+  .contact-banner {
+    height: 300px;
+    padding: 30px;
+  }
+  
+  .contact-banner h1 {
+    font-size: 32px;
+  }
+}

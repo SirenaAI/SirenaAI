@@ -20,11 +20,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 80px;
 }
 
 .sidebar-logo {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .sidebar-toggle {
@@ -38,7 +40,6 @@
   cursor: pointer;
   color: var(--sirena-text-muted);
   transition: var(--transition-base);
-  flex-shrink: 0;
 }
 
 .sidebar-toggle:hover {
@@ -59,36 +60,30 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
 }
 
 .sidebar-nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 15px;
+  padding: 0 5px;
   background-color: var(--sirena-white);
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition-base);
   color: var(--sirena-text-muted);
-  text-decoration: none;
 }
 
 .sidebar-nav-item:hover {
   background-color: var(--sirena-gray-light);
 }
 
-.sidebar-nav-item.active {
-  background-color: var(--sirena-lightest);
-  color: var(--sirena-primary);
-}
-
 .sidebar-nav-item svg {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  color: var(--sirena-text-muted);
 }
 
 .sidebar-footer {
@@ -110,27 +105,18 @@
   width: 50px;
   height: 50px;
   border-radius: var(--radius-round);
-  background-color: var(--sirena-primary);
+  background-color: var(--sirena-lightest);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--sirena-white);
+  color: var(--sirena-primary);
   font-size: var(--font-body-large);
-  font-weight: 600;
-  flex-shrink: 0;
 }
 
 .user-details {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
-}
-
-.user-details p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .user-details p:first-child {
@@ -154,7 +140,6 @@
 .logout-btn:hover {
   background-color: var(--sirena-gray-light);
   border-color: var(--sirena-primary);
-  color: var(--sirena-primary);
 }
 
 /* Main Content */
@@ -203,8 +188,8 @@
 }
 
 .filter-toggle {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -213,11 +198,9 @@
   cursor: pointer;
   color: var(--sirena-text-muted);
   transition: var(--transition-base);
-  border-radius: var(--radius-sm);
 }
 
 .filter-toggle:hover {
-  background-color: var(--sirena-gray-light);
   color: var(--sirena-primary);
 }
 
@@ -245,7 +228,6 @@
 .filter-options {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
 }
 
 .filter-option {
@@ -289,39 +271,26 @@
   overflow: hidden;
 }
 
+.map-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--sirena-light), var(--sirena-lightest));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sirena-primary);
+}
+
 @media (max-width: 768px) {
   .sidebar {
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
-    height: 100vh;
+    height: 100%;
     z-index: 20;
-    box-shadow: var(--shadow-lg);
   }
   
   .filter-options {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .filter-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 240px;
-  }
-  
-  .map-topbar {
-    padding: 10px;
-    gap: 10px;
-  }
-  
-  .search-bar {
-    font-size: 14px;
+    flex-wrap: wrap;
   }
 }

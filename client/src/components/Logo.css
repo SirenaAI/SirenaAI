@@ -1,0 +1,27 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  text-decoration: none;
+}
+
+.logo-s {
+  height: 3em;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-text {
+  font-size: var(--font-display-small);
+  font-weight: 500;
+  color: var(--sirena-text-primary);
+  line-height: 1;
+  margin-left: -8px;
+}
+
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 24px;
+  }
+}

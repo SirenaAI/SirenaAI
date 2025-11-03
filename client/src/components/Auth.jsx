@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth.jsx'
+import Input from './Input'
+import Button from './Button'
 import './Auth.css'
 
-const Auth = ({ onClose }) => {
-  const [isLogin, setIsLogin] = useState(true)
-  const [showGoogleLink, setShowGoogleLink] = useState(false)
-  const [pendingGoogleData, setPendingGoogleData] = useState(null)
+const Auth = ({ onClose, initialMode = 'login' }) => {
+  const [isLogin, setIsLogin] = useState(initialMode === 'login')
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -18,6 +18,11 @@ const Auth = ({ onClose }) => {
   const [googleLoaded, setGoogleLoaded] = useState(false)
 
   const { login, register, loginWithGoogle, loading, error } = useAuth()
+
+  // Actualizar isLogin cuando cambia initialMode
+  useEffect(() => {
+    setIsLogin(initialMode === 'login')
+  }, [initialMode])
 
   // Cargar Google Identity Services
   useEffect(() => {
@@ -63,7 +68,6 @@ const Auth = ({ onClose }) => {
     try {
       setLocalError('')
       
-      // Login directo con Google - ahora automáticamente crea la cuenta
       const result = await loginWithGoogle(response.credential)
       
       if (result.success) {
@@ -82,10 +86,7 @@ const Auth = ({ onClose }) => {
     if (googleLoaded && window.google && window.google.accounts) {
       const buttonDiv = document.getElementById('google-signin-button')
       if (buttonDiv) {
-        // Limpiar el contenido anterior
         buttonDiv.innerHTML = ''
-        
-        // Renderizar el botón
         window.google.accounts.id.renderButton(
           buttonDiv,
           {
@@ -115,7 +116,6 @@ const Auth = ({ onClose }) => {
       return false
     }
     
-    // Validaciones adicionales para registro
     if (!isLogin) {
       if (!formData.email.trim()) {
         setLocalError('El email es requerido')
@@ -196,135 +196,150 @@ const Auth = ({ onClose }) => {
     setSuccess('')
   }
 
+  const userIcon = (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="currentColor">
+      <circle cx="7.5" cy="4" r="3"/>
+      <path d="M1 15c0-4 2.5-6 6.5-6s6.5 2 6.5 6"/>
+    </svg>
+  )
+
+  const lockIcon = (
+    <svg width="13" height="16" viewBox="0 0 13 16" fill="currentColor">
+      <rect x="1" y="7" width="11" height="8" rx="1"/>
+      <path d="M3 7V5a3.5 3.5 0 0 1 7 0v2"/>
+    </svg>
+  )
+
+  const emailIcon = (
+    <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="0.5" y="0.5" width="14" height="11" rx="1"/>
+      <path d="M1 1l6.5 5 6.5-5"/>
+    </svg>
+  )
+
   return (
-    <div className="auth-overlay">
-      <div className="auth-container">
+    <div className="auth-page">
+      <div className="auth-background"></div>
+      <div className="auth-card">
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
+        
         <div className="auth-header">
-          <h2>
-            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
-          </h2>
-          {onClose && (
-            <button className="close-button" onClick={onClose}>
-              ×
-            </button>
-          )}
+          <h1 className="display-medium">
+            {isLogin ? 'Inicio de sesión' : 'Registro'}
+          </h1>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="username">Usuario</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Ingresa tu usuario"
-              disabled={loading}
-            />
-          </div>
+          <Input
+            type="text"
+            name="username"
+            placeholder="Usuario"
+            value={formData.username}
+            onChange={handleInputChange}
+            disabled={loading}
+            icon={userIcon}
+          />
 
           {!isLogin && (
             <>
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Ingresa tu email"
-                  disabled={loading}
-                />
-              </div>
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleInputChange}
+                disabled={loading}
+                icon={emailIcon}
+              />
 
-              <div className="form-group">
-                <label htmlFor="nombre">Nombre completo</label>
-                <input
-                  type="text"
-                  id="nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  placeholder="Ingresa tu nombre completo"
-                  disabled={loading}
-                />
-              </div>
+              <Input
+                type="text"
+                name="nombre"
+                placeholder="Nombre completo"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                disabled={loading}
+                icon={userIcon}
+              />
             </>
           )}
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
+          <div className="password-group">
+            <Input
               type="password"
-              id="password"
               name="password"
+              placeholder="Contraseña"
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Ingresa tu contraseña"
               disabled={loading}
+              icon={lockIcon}
             />
+            {isLogin && (
+              <a href="#" className="forgot-password" onClick={(e) => e.preventDefault()}>
+                Olvidé mi contraseña
+              </a>
+            )}
           </div>
 
           {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirmar Contraseña</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                placeholder="Confirma tu contraseña"
-                disabled={loading}
-              />
-            </div>
+            <Input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirmar contraseña"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              disabled={loading}
+              icon={lockIcon}
+            />
           )}
 
           {(localError || error) && (
-            <div className="error-message">
+            <div className="error-message body-medium">
               {localError || error}
             </div>
           )}
 
           {success && (
-            <div className="success-message">
+            <div className="success-message body-medium">
               {success}
             </div>
           )}
 
-          <button 
-            type="submit" 
-            className="submit-button"
-            disabled={loading}
-          >
-            {loading ? 'Procesando...' : 
-             (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
-          </button>
-        </form>
-
-        {/* Google Sign-In Button */}
-        <div className="google-signin-section">
-          <div className="divider">
-            <span>o</span>
-          </div>
-          <div id="google-signin-button"></div>
-        </div>
-
-        <div className="auth-switch">
-          <p>
-            {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
-            <button 
-              type="button" 
-              className="switch-button"
-              onClick={switchMode}
+          <div className="auth-actions">
+            <Button 
+              type="submit" 
+              variant="solid" 
+              color="dark" 
+              size="large" 
+              className="auth-submit"
               disabled={loading}
             >
-              {isLogin ? 'Crear cuenta' : 'Iniciar sesión'}
-            </button>
-          </p>
-        </div>
+              {loading ? 'Procesando...' : (isLogin ? 'Iniciar sesión' : 'Registrarse')}
+            </Button>
+            
+            <div className="auth-divider">
+              <span className="body-medium">o</span>
+            </div>
+
+            <div id="google-signin-button"></div>
+            
+            <div className="auth-switch">
+              <span className="body-medium">
+                {isLogin ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?'}
+              </span>
+              <button 
+                type="button"
+                className="body-medium auth-link"
+                onClick={switchMode}
+                disabled={loading}
+              >
+                {isLogin ? 'Crea una cuenta' : 'Iniciar sesión'}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   )
