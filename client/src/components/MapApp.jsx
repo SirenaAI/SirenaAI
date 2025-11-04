@@ -8,8 +8,12 @@ import './MapApp.css'
 
 const MapApp = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [filterOpen, setFilterOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedDepartment, setSelectedDepartment] = useState(null)
+  const [firstResult, setFirstResult] = useState(null)
+  const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [resultsCount, setResultsCount] = useState(0)
+  const [allResults, setAllResults] = useState([])
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -17,6 +21,28 @@ const MapApp = () => {
     if (window.confirm('¿Estás seguro que deseas cerrar sesión?')) {
       logout()
       navigate('/')
+    }
+  }
+
+  const handleDepartmentSelect = (department) => {
+    setSelectedDepartment(department)
+    setSearchQuery('')
+    setHighlightedIndex(0)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const resultToSelect = allResults[highlightedIndex] || firstResult
+      if (resultToSelect) {
+        handleDepartmentSelect(resultToSelect)
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setHighlightedIndex(prev => Math.min(prev + 1, resultsCount - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setHighlightedIndex(prev => Math.max(prev - 1, 0))
     }
   }
 
@@ -112,58 +138,23 @@ const MapApp = () => {
               placeholder="Buscar departamento..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="body-medium"
             />
           </div>
-
-          <button 
-            className="filter-toggle"
-            onClick={() => setFilterOpen(!filterOpen)}
-            title="Mostrar/Ocultar filtros"
-          >
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 8h20M8 15h14M11 22h8"/>
-            </svg>
-          </button>
         </div>
-
-        {/* Filter Bar */}
-        {filterOpen && (
-          <div className="filter-bar">
-            <div className="filter-section">
-              <h3 className="body-medium">Niveles de Riesgo</h3>
-              <div className="filter-options">
-                <label className="filter-option">
-                  <input type="checkbox" defaultChecked />
-                  <span className="filter-color" style={{backgroundColor: '#8B0000'}}></span>
-                  <span className="body-medium">Muy Alto (70-100%)</span>
-                </label>
-                <label className="filter-option">
-                  <input type="checkbox" defaultChecked />
-                  <span className="filter-color" style={{backgroundColor: '#FF0000'}}></span>
-                  <span className="body-medium">Alto (40-70%)</span>
-                </label>
-                <label className="filter-option">
-                  <input type="checkbox" defaultChecked />
-                  <span className="filter-color" style={{backgroundColor: '#FFFF00'}}></span>
-                  <span className="body-medium">Medio (20-40%)</span>
-                </label>
-                <label className="filter-option">
-                  <input type="checkbox" defaultChecked />
-                  <span className="filter-color" style={{backgroundColor: '#00FF00'}}></span>
-                  <span className="body-medium">Bajo (0-20%)</span>
-                </label>
-              </div>
-            </div>
-            <button className="filter-cancel body-medium" onClick={() => setFilterOpen(false)}>
-              Cerrar
-            </button>
-          </div>
-        )}
 
         {/* Map */}
         <div className="map-container">
-          <FloodMap />
+          <FloodMap 
+            searchQuery={searchQuery} 
+            selectedDepartment={selectedDepartment}
+            onDepartmentSelect={handleDepartmentSelect}
+            onFirstResultChange={setFirstResult}
+            highlightedIndex={highlightedIndex}
+            onResultsCountChange={setResultsCount}
+            onAllResultsChange={setAllResults}
+          />
           <MapLegend />
         </div>
       </main>
