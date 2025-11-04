@@ -74,7 +74,7 @@ const MapApp = () => {
               </div>
               <div className="user-details">
                 <p className="body-medium">{user?.nombre || user?.username}</p>
-                <p className="body-medium text-muted">{user?.email || 'Sin email'}</p>
+                <p className="body-medium text-muted">{user?.username}</p>
               </div>
             </div>
             <button className="logout-btn" onClick={handleLogout}>
