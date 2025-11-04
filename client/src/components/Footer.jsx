@@ -5,7 +5,6 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-about">
-          <h2 className="h2">About</h2>
           <p className="body-medium text-muted">
             SIRENA es un proyecto basado en inteligencia artificial que analiza
             información climática e hidrológica para anticipar riesgos de

@@ -20,9 +20,6 @@
   max-width: 535px;
 }
 
-.footer-about h2 {
-  color: var(--sirena-black);
-}
 
 .footer-social {
   display: flex;

@@ -61,9 +61,6 @@ const Landing = () => {
               información precisa para la prevención y gestión del riesgo hídrico.
             </p>
           </div>
-          <div className="about-image">
-            <span className="display-large">Foto</span>
-          </div>
           <div className="about-stats">
             <div className="stat-card">
               <p className="display-small">+200<br/>Localidades</p>
