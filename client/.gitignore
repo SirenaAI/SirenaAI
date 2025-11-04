@@ -1,2 +1,19 @@
+# Vercel
 .vercel
+
+# Environment variables
+.env
 .env*.local
+
+# Build output
+dist
+dist-ssr
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Node
+node_modules

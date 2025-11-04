@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react'
-import { AuthProvider } from './hooks/useAuth.jsx'
+import AuthProvider from './components/AuthProvider'
 import Landing from './components/Landing'
 import MapApp from './components/MapApp'
 import ContactPage from './components/ContactPage'
@@ -10,9 +10,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    // Hacer health check al backend y test de DB cuando se inicia la aplicación
     const checkConnections = async () => {
-      // Chequear backend
       try {
         const data = await api.healthCheck()
         console.log('✅ Conexión exitosa con el backend:', data)
@@ -20,7 +18,6 @@ function App() {
         console.error('❌ Error al conectar con el backend:', error.message)
       }
 
-      // Chequear base de datos
       try {
         const dbData = await api.dbTest()
         console.log('✅ Conexión exitosa con la base de datos:', dbData)

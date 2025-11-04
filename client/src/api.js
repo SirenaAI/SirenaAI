@@ -1,14 +1,11 @@
-// API configuration
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
 
 export const api = {
   baseURL: API_BASE_URL,
   
-  // Helper function for making API calls
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`
     
-    // Obtener token del localStorage si existe
     const token = localStorage.getItem('token')
     
     const config = {
@@ -23,12 +20,9 @@ export const api = {
     try {
       const response = await fetch(url, config)
       
-      // Si la respuesta es 401 Y hay un token (usuario autenticado previamente)
-      // entonces el token expiró, limpiar y recargar
       if (response.status === 401 && token && endpoint !== '/login' && endpoint !== '/crearusuario') {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
-        // Solo recargar si era un usuario autenticado cuyo token expiró
         window.location.reload()
         return
       }
@@ -71,11 +65,10 @@ export const api = {
   },
 
   async loginWithGoogle(credential) {
-    let respuesta = await this.request('/auth/google', {
+    const respuesta = await this.request('/auth/google', {
       method: 'POST',
       body: JSON.stringify({ credential })
     })
-    console.log(respuesta);
     return respuesta
   },
 

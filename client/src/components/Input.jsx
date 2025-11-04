@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './Input.css';
+import { useState } from 'react'
+import './Input.css'
 
 const Input = ({ 
   type = 'text',
@@ -14,8 +14,8 @@ const Input = ({
   name,
   disabled = false
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const isPassword = type === 'password';
+  const [showPassword, setShowPassword] = useState(false)
+  const isPassword = type === 'password'
 
   return (
     <div className={`input-wrapper ${className}`}>
@@ -59,7 +59,7 @@ const Input = ({
       </div>
       {error && <span className="input-error body-medium">{error}</span>}
     </div>
-  );
-};
+  )
+}
 
-export default Input;
+export default Input

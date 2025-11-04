@@ -1,4 +1,4 @@
-     import { getColorFromValue } from '../utils/colorUtils'
+import { getColorFromValue } from '../utils/colorUtils'
 import './MapLegend.css'
 
 const MapLegend = () => {

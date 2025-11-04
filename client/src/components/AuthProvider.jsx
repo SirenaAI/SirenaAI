@@ -1,26 +1,13 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect } from 'react'
+import AuthContext from '../contexts/AuthContext'
 import api from '../api'
 
-// Crear el contexto de autenticación
-const AuthContext = createContext()
-
-// Hook personalizado para usar el contexto de autenticación
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth debe ser usado dentro de un AuthProvider')
-  }
-  return context
-}
-
-// Proveedor del contexto de autenticación
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Verificar si hay un token válido al cargar la aplicación
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = localStorage.getItem('token')
@@ -41,7 +28,6 @@ export const AuthProvider = ({ children }) => {
     initAuth()
   }, [])
 
-  // Función de login
   const login = async (username, password) => {
     try {
       setError(null)
@@ -53,11 +39,9 @@ export const AuthProvider = ({ children }) => {
         const userToken = response.token
         const userData = response.usuario
         
-        // Guardar en localStorage
         localStorage.setItem('token', userToken)
         localStorage.setItem('user', JSON.stringify(userData))
         
-        // Actualizar estado
         setToken(userToken)
         setUser(userData)
         
@@ -70,8 +54,8 @@ export const AuthProvider = ({ children }) => {
       const errorMessage = error.message.includes('401') 
         ? 'Usuario o contraseña incorrectos' 
         : error.message.includes('400')
-        ? 'Faltan datos requeridos'
-        : 'Error de conexión con el servidor'
+          ? 'Faltan datos requeridos'
+          : 'Error de conexión con el servidor'
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -80,7 +64,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Función de registro
   const register = async (username, email, nombre, password) => {
     try {
       setError(null)
@@ -98,8 +81,8 @@ export const AuthProvider = ({ children }) => {
       const errorMessage = error.message.includes('409') 
         ? 'El usuario ya existe' 
         : error.message.includes('400')
-        ? 'Faltan datos requeridos'
-        : 'Error de conexión con el servidor'
+          ? 'Faltan datos requeridos'
+          : 'Error de conexión con el servidor'
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -108,7 +91,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Función de login con Google
   const loginWithGoogle = async (credential) => {
     try {
       setError(null)
@@ -120,11 +102,9 @@ export const AuthProvider = ({ children }) => {
         const userToken = response.token
         const userData = response.usuario
         
-        // Guardar en localStorage
         localStorage.setItem('token', userToken)
         localStorage.setItem('user', JSON.stringify(userData))
         
-        // Actualizar estado
         setToken(userToken)
         setUser(userData)
         
@@ -137,8 +117,8 @@ export const AuthProvider = ({ children }) => {
       const errorMessage = error.message.includes('401') 
         ? 'Error de autenticación con Google' 
         : error.message.includes('409')
-        ? 'Error al crear cuenta con Google'
-        : 'Error de conexión con el servidor'
+          ? 'Error al crear cuenta con Google'
+          : 'Error de conexión con el servidor'
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -147,7 +127,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Función de logout
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -156,7 +135,6 @@ export const AuthProvider = ({ children }) => {
     setError(null)
   }
 
-  // Verificar si el usuario está autenticado
   const isAuthenticated = () => {
     return !!(token && user)
   }
@@ -181,4 +159,4 @@ export const AuthProvider = ({ children }) => {
   )
 }
 
-export default useAuth
+export default AuthProvider

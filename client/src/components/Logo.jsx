@@ -1,6 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Logo.css';
+import { Link } from 'react-router-dom'
+import './Logo.css'
 
 const Logo = () => {
   return (
@@ -8,7 +7,7 @@ const Logo = () => {
       <img src="/sirena.svg" alt="S" className="logo-s" />
       <span className="logo-text">IRENA</span>
     </Link>
-  );
-};
+  )
+}
 
-export default Logo;
+export default Logo

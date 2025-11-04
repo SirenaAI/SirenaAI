@@ -1,111 +1,111 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import './Header.css';
-import Logo from './Logo';
-import Button from './Button';
-import Auth from './Auth';
-import { useAuth } from '../hooks/useAuth';
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import './Header.css'
+import Logo from './Logo'
+import Button from './Button'
+import Auth from './Auth'
+import { useAuth } from '../hooks/useAuth'
 
 const Header = ({ onAuthOpen }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
-  const [showAuth, setShowAuth] = useState(false);
-  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { isAuthenticated, user, logout } = useAuth()
+  const [showAuth, setShowAuth] = useState(false)
+  const [authMode, setAuthMode] = useState('login') // 'login' or 'register'
   
   const isActive = (path) => {
-    return location.pathname === path;
-  };
+    return location.pathname === path
+  }
 
   const handleLogout = () => {
     if (window.confirm('¿Estás seguro que deseas cerrar sesión?')) {
-      logout();
-      navigate('/');
+      logout()
+      navigate('/')
     }
-  };
+  }
 
   const handleOpenAuth = (mode) => {
-    setAuthMode(mode);
-    setShowAuth(true);
+    setAuthMode(mode)
+    setShowAuth(true)
     if (onAuthOpen) {
-      onAuthOpen(mode);
+      onAuthOpen(mode)
     }
-  };
+  }
 
   const handleCloseAuth = () => {
-    setShowAuth(false);
-  };
+    setShowAuth(false)
+  }
 
   return (
     <>
-    <header className="header">
-      <div className="header-container">
-        <Logo />
+      <header className="header">
+        <div className="header-container">
+          <Logo />
         
-        <nav className="header-nav">
-          <Link 
-            to="/" 
-            className={`header-link ${isActive('/') ? 'active' : ''}`}
-          >
-            Inicio
-          </Link>
-          <Link 
-            to="/contacto" 
-            className={`header-link ${isActive('/contacto') ? 'active' : ''}`}
-          >
-            Contacto
-          </Link>
-          {isAuthenticated() && (
+          <nav className="header-nav">
             <Link 
-              to="/app" 
-              className={`header-link ${isActive('/app') ? 'active' : ''}`}
+              to="/" 
+              className={`header-link ${isActive('/') ? 'active' : ''}`}
             >
-              Mapa
+            Inicio
             </Link>
-          )}
-        </nav>
+            <Link 
+              to="/contacto" 
+              className={`header-link ${isActive('/contacto') ? 'active' : ''}`}
+            >
+            Contacto
+            </Link>
+            {isAuthenticated() && (
+              <Link 
+                to="/app" 
+                className={`header-link ${isActive('/app') ? 'active' : ''}`}
+              >
+              Mapa
+              </Link>
+            )}
+          </nav>
         
-        <div className="header-actions">
-          {isAuthenticated() ? (
-            <>
-              <span className="header-user body-medium">
+          <div className="header-actions">
+            {isAuthenticated() ? (
+              <>
+                <span className="header-user body-medium">
                 Hola, {user?.nombre || user?.username}
-              </span>
-              <Button 
-                variant="border" 
-                size="small"
-                onClick={handleLogout}
-              >
+                </span>
+                <Button 
+                  variant="border" 
+                  size="small"
+                  onClick={handleLogout}
+                >
                 Cerrar Sesión
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button 
-                variant="solid" 
-                color="primary" 
-                size="small"
-                onClick={() => handleOpenAuth('register')}
-              >
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="solid" 
+                  color="primary" 
+                  size="small"
+                  onClick={() => handleOpenAuth('register')}
+                >
                 Sign up
-              </Button>
-              <Button 
-                variant="border" 
-                size="small"
-                onClick={() => handleOpenAuth('login')}
-              >
+                </Button>
+                <Button 
+                  variant="border" 
+                  size="small"
+                  onClick={() => handleOpenAuth('login')}
+                >
                 Log In
-              </Button>
-            </>
-          )}
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-    {/* Modal de autenticación */}
-    {showAuth && <Auth onClose={handleCloseAuth} initialMode={authMode} />}
+      {/* Modal de autenticación */}
+      {showAuth && <Auth onClose={handleCloseAuth} initialMode={authMode} />}
     </>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

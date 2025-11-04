@@ -6,13 +6,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 
-const { Pool, Client } = pkg;
+const { Pool } = pkg;
 dotenv.config();
 
-// Configurar Google OAuth client
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// PostgreSQL connection
 const pool = new Pool({
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
@@ -24,19 +22,6 @@ const pool = new Pool({
   }
 });
 
-// Database configuration for individual client connections
-const dbConfig = {
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false
-  }
-};
-
-// Test database connection
 pool.on('connect', () => {
   console.log('📊 Connected to PostgreSQL database');
 });
@@ -48,12 +33,10 @@ pool.on('error', (err) => {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
 app.get('/', (req, res) => {
   res.json({ 
     message: 'SirenaAI Server is running!',
@@ -70,7 +53,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Database connection test endpoint
 app.get('/db-test', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -94,7 +76,6 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
-// Get all inundaciones data
 app.get('/inundaciones', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -127,7 +108,6 @@ app.post('/crearusuario', async (req, res) => {
     
     const client = await pool.connect();
 
-    // Verificar si ya existe el usuario o email
     const existingUser = await client.query(
       'SELECT username FROM usuario WHERE username = $1 OR email = $2', 
       [username, email]
@@ -181,7 +161,6 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
 
-    // Actualizar último login
     await client.query('UPDATE usuario SET ultimo_login = CURRENT_TIMESTAMP WHERE username = $1', [username]);
     
     client.release();
@@ -209,7 +188,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Endpoint para Google OAuth - Registro y login automático
 app.post('/auth/google', async (req, res) => {
   try {
     const { credential } = req.body;
@@ -218,7 +196,6 @@ app.post('/auth/google', async (req, res) => {
       return res.status(400).json({ error: 'Token de Google requerido' });
     }
     
-    // Verificar el token de Google
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -230,7 +207,6 @@ app.post('/auth/google', async (req, res) => {
     const client = await pool.connect();
     
     try {
-      // Buscar usuario existente por Google ID o email
       let userResult = await client.query(
         'SELECT username, email, google_id, nombre FROM usuario WHERE google_id = $1 OR email = $2',
         [googleId, email]
@@ -239,8 +215,6 @@ app.post('/auth/google', async (req, res) => {
       let user;
       
       if (userResult.rows.length === 0) {
-        // Usuario no existe - crear automáticamente
-        // Generar username del email (parte antes del @)
         const username = email.split('@')[0];
         console.log(`🆕 Creando nuevo usuario con Google - Username: ${username}, Email: ${email}`);
         
@@ -257,7 +231,6 @@ app.post('/auth/google', async (req, res) => {
         console.log(`✅ Usuario creado exitosamente - Username: ${user.username}, Email: ${user.email}`);
         
       } else {
-        // Usuario existe - actualizar información de Google
         user = userResult.rows[0];
         
         await client.query(
@@ -274,7 +247,6 @@ app.post('/auth/google', async (req, res) => {
         console.log(`✅ Usuario actualizado: ${user.username}`);
       }
       
-      // Generar JWT
       const token = jwt.sign(
         { 
           username: user.username,

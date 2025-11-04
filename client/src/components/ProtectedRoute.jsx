@@ -1,4 +1,4 @@
-import { useAuth } from '../hooks/useAuth.jsx'
+import { useAuth } from '../hooks/useAuth'
 import Auth from './Auth'
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {

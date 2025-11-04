@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useAuth } from '../hooks/useAuth.jsx'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '../hooks/useAuth'
 import Input from './Input'
 import Button from './Button'
 import './Auth.css'
@@ -19,22 +19,35 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
 
   const { login, register, loginWithGoogle, loading, error } = useAuth()
 
-  // Actualizar isLogin cuando cambia initialMode
   useEffect(() => {
     setIsLogin(initialMode === 'login')
   }, [initialMode])
 
-  // Cargar Google Identity Services
+  const handleGoogleSignIn = useCallback(async (response) => {
+    try {
+      setLocalError('')
+      
+      const result = await loginWithGoogle(response.credential)
+      
+      if (result.success) {
+        setSuccess('¡Login con Google exitoso!')
+        setTimeout(() => {
+          onClose && onClose()
+        }, 1500)
+      }
+    } catch {
+      setLocalError('Error al procesar login con Google')
+    }
+  }, [loginWithGoogle, onClose])
+
   useEffect(() => {
     const loadGoogleScript = () => {
-      // Si ya está cargado, solo marcarlo como listo
       if (window.google && window.google.accounts) {
         setGoogleLoaded(true)
         initializeGoogleSignIn()
         return
       }
 
-      // Si ya existe el script, no lo agregues de nuevo
       if (document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
         return
       }
@@ -62,26 +75,8 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
     }
 
     loadGoogleScript()
-  }, [])
+  }, [handleGoogleSignIn])
 
-  const handleGoogleSignIn = async (response) => {
-    try {
-      setLocalError('')
-      
-      const result = await loginWithGoogle(response.credential)
-      
-      if (result.success) {
-        setSuccess('¡Login con Google exitoso!')
-        setTimeout(() => {
-          onClose && onClose()
-        }, 1500)
-      }
-    } catch (err) {
-      setLocalError('Error al procesar login con Google')
-    }
-  }
-
-  // Renderizar botón de Google cuando esté listo
   useEffect(() => {
     if (googleLoaded && window.google && window.google.accounts) {
       const buttonDiv = document.getElementById('google-signin-button')
@@ -178,7 +173,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
           }, 2000)
         }
       }
-    } catch (err) {
+    } catch {
       setLocalError('Error inesperado')
     }
   }
