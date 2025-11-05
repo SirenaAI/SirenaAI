@@ -205,8 +205,9 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
     const view = mapInstanceRef.current.getView()
     
     view.fit(extent, {
-      padding: [600, 600, 600, 600], // Padding around the department
+      padding: [100, 100, 100, 100], // Padding around the department
       duration: 1000,
+      maxZoom: 15 // Prevent zooming in too close
     })
   }, [selectedDepartment])
 
@@ -222,21 +223,6 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
         <div className="map-loading">
           <div className="map-loading-spinner"></div>
           Cargando datos de inundaciones...
-        </div>
-      )}
-
-      {/* Search results dropdown */}
-      {showResults && searchResults.length > 0 && (
-        <div className="search-results-dropdown">
-          {searchResults.map((result, index) => (
-            <div
-              key={`${result.id}-${index}`}
-              className={`search-result-item ${index === highlightedIndex ? 'highlighted' : ''}`}
-              onClick={() => onDepartmentSelect(result)}
-            >
-              {result.name}
-            </div>
-          ))}
         </div>
       )}
       

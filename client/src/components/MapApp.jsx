@@ -144,6 +144,21 @@ const MapApp = () => {
           </div>
         </div>
 
+        {/* Search results dropdown */}
+        {searchQuery && allResults.length > 0 && (
+          <div className={`search-results-dropdown ${sidebarOpen ? 'with-sidebar' : ''}`}>
+            {allResults.map((result, index) => (
+              <div
+                key={`${result.id}-${index}`}
+                className={`search-result-item ${index === highlightedIndex ? 'highlighted' : ''}`}
+                onClick={() => handleDepartmentSelect(result)}
+              >
+                {result.name}
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Map */}
         <div className="map-container">
           <FloodMap 
