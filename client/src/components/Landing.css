@@ -11,6 +11,12 @@
   padding: 75px 160px;
 }
 
+.hero-content a,
+.hero-content > button {
+  display: inline-block;
+  width: fit-content;
+}
+
 .hero-container {
   display: flex;
   justify-content: center;
@@ -143,6 +149,7 @@
 }
 
 .ai-card h3 {
+  font-weight: 600;
   color: var(--sirena-white);
 }
 
