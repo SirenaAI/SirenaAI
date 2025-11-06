@@ -286,8 +286,9 @@ app.post('/auth/google', async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🌐 Network: http://0.0.0.0:${PORT}`);
   console.log(`📋 Health check: http://localhost:${PORT}/health`);
   console.log(`🗄️ Database test: http://localhost:${PORT}/db-test`);
   console.log(`🌊 Inundaciones data: http://localhost:${PORT}/inundaciones`);

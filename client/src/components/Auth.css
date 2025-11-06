@@ -7,7 +7,7 @@
   justify-content: flex-end;
   overflow: hidden;
   animation: fadeIn 0.3s ease-out;
-  padding-right: 80px;
+  padding-right: 100px;
 }
 
 @keyframes fadeIn {
@@ -61,7 +61,7 @@
 }
 
 .auth-sirena-logo {
-  width: 400px;
+  width: clamp(300px, 30vw, 600px);
   height: auto;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
   animation: float 6s ease-in-out infinite;
@@ -398,10 +398,6 @@
 
   .auth-left-section {
     width: 400px;
-  }
-
-  .auth-sirena-logo {
-    width: 320px;
   }
 }
 
