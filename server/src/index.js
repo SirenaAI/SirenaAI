@@ -146,7 +146,7 @@ app.post('/login', async (req, res) => {
     
     const client = await pool.connect();
 
-    const userResult = await client.query('SELECT username, password, nombre FROM usuario WHERE username = $1', [username]);
+    const userResult = await client.query('SELECT username, password, nombre, email FROM usuario WHERE username = $1', [username]);
     
     if (userResult.rows.length === 0) {
       client.release();
@@ -178,7 +178,8 @@ app.post('/login', async (req, res) => {
       token: token,
       usuario: {
         username: user.username,
-        nombre: user.nombre
+        nombre: user.nombre,
+        email: user.email
       }
     });
 
@@ -263,6 +264,7 @@ app.post('/auth/google', async (req, res) => {
         usuario: {
           username: user.username,
           nombre: name,
+          email: email,
           avatar: picture,
           googleLinked: true,
           loginMethod: 'google'

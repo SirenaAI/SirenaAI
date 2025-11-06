@@ -1,18 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import emailjs from '@emailjs/browser'
 import './ContactPage.css'
 import Header from './Header'
 import Footer from './Footer'
 import Input from './Input'
 import Button from './Button'
+import { useAuth } from '../hooks/useAuth'
 
 const ContactPage = () => {
+  const { user } = useAuth()
+  
   const [formData, setFormData] = useState({
     nombre: '',
     telefono: '',
     email: '',
     mensaje: ''
   })
+  
+  // Auto-rellenar nombre y email cuando el usuario está logueado
+  useEffect(() => {
+    console.log('👤 Usuario actual:', user)
+    if (user) {
+      console.log('📧 Email del usuario:', user.email)
+      console.log('📝 Nombre del usuario:', user.nombre)
+      setFormData(prev => ({
+        ...prev,
+        nombre: user.nombre || '',
+        email: user.email || ''
+      }))
+    }
+  }, [user])
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -109,6 +126,7 @@ const ContactPage = () => {
                 placeholder="Tu nombre completo"
                 value={formData.nombre}
                 onChange={handleChange}
+                disabled={!!user}
               />
               
               <Input
@@ -124,10 +142,11 @@ const ContactPage = () => {
                 label="Mail"
                 type="email"
                 name="email"
-                placeholder="tuemail@ejemplo.com"
+                placeholder="mail@ejemplo.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
+                disabled={!!user}
               />
               
               <div className="input-wrapper">

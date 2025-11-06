@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="footer-social">
           <h2 className="h2">Social</h2>
           <div className="footer-links">
-            <a href="mailto:sirena@example.com" className="footer-link">
+            <a href="mailto:sirenaai2025@gmail.com" className="footer-link">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M3 5h18v14H3z" stroke="currentColor" strokeWidth="2"/>
                 <path d="M3 5l9 7 9-7" stroke="currentColor" strokeWidth="2"/>

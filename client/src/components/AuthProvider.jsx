@@ -35,9 +35,13 @@ export const AuthProvider = ({ children }) => {
       
       const response = await api.login(username, password)
       
+      console.log('🔐 Respuesta del servidor:', response)
+      
       if (response.token && response.usuario) {
         const userToken = response.token
         const userData = response.usuario
+        
+        console.log('👤 Datos del usuario a guardar:', userData)
         
         localStorage.setItem('token', userToken)
         localStorage.setItem('user', JSON.stringify(userData))
@@ -98,9 +102,13 @@ export const AuthProvider = ({ children }) => {
       
       const response = await api.loginWithGoogle(credential)
       
+      console.log('🔐 Respuesta del servidor (Google):', response)
+      
       if (response.token && response.usuario) {
         const userToken = response.token
         const userData = response.usuario
+        
+        console.log('👤 Datos del usuario a guardar (Google):', userData)
         
         localStorage.setItem('token', userToken)
         localStorage.setItem('user', JSON.stringify(userData))

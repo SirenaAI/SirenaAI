@@ -11,11 +11,22 @@ export async function fetchDepartmentData() {
     const response = await api.getInundaciones()
     const inundacionesData = response.data || []
     const dataMap = {}
+    
     if (Array.isArray(inundacionesData)) {
       inundacionesData.forEach(item => {
-        if (item.id && typeof item.riesgo === 'number') {
+        if (item.id) {
           const formattedId = item.id.toString().padStart(5, '0')
-          dataMap[formattedId] = item.riesgo
+          // Guardamos todos los riesgos (riesgo0 a riesgo7)
+          dataMap[formattedId] = {
+            riesgo0: typeof item.riesgo0 === 'number' ? item.riesgo0 : null,
+            riesgo1: typeof item.riesgo1 === 'number' ? item.riesgo1 : null,
+            riesgo2: typeof item.riesgo2 === 'number' ? item.riesgo2 : null,
+            riesgo3: typeof item.riesgo3 === 'number' ? item.riesgo3 : null,
+            riesgo4: typeof item.riesgo4 === 'number' ? item.riesgo4 : null,
+            riesgo5: typeof item.riesgo5 === 'number' ? item.riesgo5 : null,
+            riesgo6: typeof item.riesgo6 === 'number' ? item.riesgo6 : null,
+            riesgo7: typeof item.riesgo7 === 'number' ? item.riesgo7 : null
+          }
         }
       })
     }
@@ -43,9 +54,11 @@ export async function getDepartmentDataFromDB() {
 }
 
 
-export async function getDepartmentValue(departmentId) {
+export async function getDepartmentValue(departmentId, day = 0) {
   const data = await getDepartmentDataFromDB()
-  return data[departmentId] || null
+  const departmentData = data[departmentId]
+  if (!departmentData) return null
+  return departmentData[`riesgo${day}`] || null
 }
 
 

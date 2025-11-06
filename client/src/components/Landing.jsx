@@ -176,10 +176,9 @@ const Landing = () => {
             <div className="beneficiary-card">
               <div className="beneficiary-header">
                 <div className="beneficiary-icon">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M30 12V30H0V12L10.5 7.5V10.5L18 7.5V12H30ZM22.8 9.75L24 0H28.5L29.7 9.75H22.8ZM13.5 24H16.5V18H13.5V24ZM7.5 24H10.5V18H7.5V24ZM22.5 18H19.5V24H22.5V18Z" fill="#58929D"/>
-                  </svg>
-
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                  <path d="M24 18H21V21H24M24 12H21V15H24M27 24H15V21H18V18H15V15H18V12H15V9H27M12 6H9V3H12M12 12H9V9H12M12 18H9V15H12M12 24H9V21H12M6 6H3V3H6M6 12H3V9H6M6 18H3V15H6M6 24H3V21H6M15 6V0H0V27H30V6H15Z" fill="#58929D"/>
+                  </svg>  
                 </div>
                 <h3 className="h3">Administraciones públicas</h3>
               </div>

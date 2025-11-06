@@ -11,7 +11,7 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { getColorFromValue } from '../utils/colorUtils'
 import { getDepartmentDataFromDB } from '../utils/departmentData'
 
-const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirstResultChange, highlightedIndex, onResultsCountChange, onAllResultsChange }) => {
+const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirstResultChange, highlightedIndex, onResultsCountChange, onAllResultsChange, selectedDay = 0 }) => {
   const mapRef = useRef()
   const mapInstanceRef = useRef(null)
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, content: '' })
@@ -21,6 +21,12 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
   const departmentsLayerRef = useRef(null)
   const [searchResults, setSearchResults] = useState([])
   const [showResults, setShowResults] = useState(false)
+  const selectedDayRef = useRef(selectedDay)
+
+  // Actualizar la referencia cuando cambia selectedDay
+  useEffect(() => {
+    selectedDayRef.current = selectedDay
+  }, [selectedDay])
 
   useEffect(() => {
     const loadDepartmentData = async () => {
@@ -82,7 +88,8 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
 
     const departmentStyleFunction = (feature) => {
       const departmentId = feature.get('in1')
-      const value = departmentData[departmentId] || null
+      const departmentRisks = departmentData[departmentId]
+      const value = departmentRisks ? departmentRisks[`riesgo${selectedDayRef.current}`] : null
       const fillColor = getColorFromValue(value)
       
       return new Style({
@@ -125,7 +132,8 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
       if (feature) {
         const departmentId = feature.get('in1')
         const departmentName = feature.get('nam')
-        const value = departmentData[departmentId] || null
+        const departmentRisks = departmentData[departmentId]
+        const value = departmentRisks ? departmentRisks[`riesgo${selectedDayRef.current}`] : null
         const formattedValue = value !== null ? `${(value * 100).toFixed(1)}%` : 'Sin datos'
         
         setTooltip({
@@ -144,6 +152,18 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
 
     return () => map.setTarget(null)
   }, [departmentData])
+
+  // Actualizar el estilo del mapa cuando cambia el día seleccionado
+  useEffect(() => {
+    if (departmentsLayerRef.current) {
+      // Forzar el redibujado de la capa
+      const source = departmentsLayerRef.current.getSource()
+      if (source) {
+        source.changed()
+      }
+      departmentsLayerRef.current.changed()
+    }
+  }, [selectedDay])
 
   // Handle search functionality
   useEffect(() => {
@@ -260,7 +280,8 @@ FloodMap.propTypes = {
   onFirstResultChange: PropTypes.func,
   highlightedIndex: PropTypes.number,
   onResultsCountChange: PropTypes.func,
-  onAllResultsChange: PropTypes.func
+  onAllResultsChange: PropTypes.func,
+  selectedDay: PropTypes.number
 }
 
 export default FloodMap
