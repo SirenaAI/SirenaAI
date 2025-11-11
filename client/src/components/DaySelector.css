@@ -3,13 +3,27 @@
   bottom: 20px;
   right: 20px;
   display: flex;
-  flex-direction: row;
-  gap: 8px;
+  flex-direction: column;
+  gap: 12px;
   background: rgba(255, 255, 255, 0.95);
-  padding: 12px;
-  border-radius: 60px;
+  padding: 16px;
+  border-radius: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 1000;
+}
+
+.day-selector-title {
+  color: #37717C;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.day-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
 
 .day-button {
@@ -54,7 +68,14 @@
     bottom: 10px;
     right: 10px;
     left: 10px;
-    padding: 8px;
+    padding: 12px;
+  }
+
+  .day-selector-title {
+    font-size: 14px;
+  }
+
+  .day-buttons {
     overflow-x: auto;
   }
   

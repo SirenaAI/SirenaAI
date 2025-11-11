@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import Input from './Input'
 import Button from './Button'
-import sirenaLogo from './sirena-light.svg'
+import sirenaLogo from 'https://www.figma.com/design/odnJq5SP1MzEZrKZcxkVkm/Sirena?node-id=38-17&p=f&t=GtVwFYHT82G1bdxb-0'
 import './Auth.css'
 
 const Auth = ({ onClose, initialMode = 'login' }) => {

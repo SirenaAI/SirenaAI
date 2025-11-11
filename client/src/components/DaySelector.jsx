@@ -29,15 +29,18 @@ const DaySelector = ({ selectedDay, onDayChange }) => {
 
   return (
     <div className="day-selector">
-      {days.map((day) => (
-        <button
-          key={day.value}
-          className={`day-button ${selectedDay === day.value ? 'active' : ''}`}
-          onClick={() => onDayChange(day.value)}
-        >
-          {day.label}
-        </button>
-      ))}
+      <h3 className="day-selector-title">Predicción para 7 días</h3>
+      <div className="day-buttons">
+        {days.map((day) => (
+          <button
+            key={day.value}
+            className={`day-button ${selectedDay === day.value ? 'active' : ''}`}
+            onClick={() => onDayChange(day.value)}
+          >
+            {day.label}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

@@ -7,7 +7,7 @@
   justify-content: flex-end;
   overflow: hidden;
   animation: fadeIn 0.3s ease-out;
-  padding-right: 100px;
+  padding-right: 150px;
 }
 
 @keyframes fadeIn {
@@ -50,7 +50,7 @@
 
 .auth-left-section {
   position: absolute;
-  left: 0;
+  left: 80px;
   top: 0;
   bottom: 0;
   width: 500px;
