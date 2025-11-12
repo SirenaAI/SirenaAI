@@ -15,8 +15,8 @@
     "lint": "npm run server:lint && npm run client:lint",
     "server:lint": "cd server && npm run lint",
     "client:lint": "cd client && npm run lint",
-    "deploy:backend": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 vercel --prod",
-    "deploy:frontend": "cd client && cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 vercel --prod",
+    "deploy:backend": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 vercel --prod --cwd server",
+    "deploy:frontend": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 vercel --prod --cwd client",
     "deploy:all": "npm run deploy:backend && npm run deploy:frontend"
   },
   "keywords": [
