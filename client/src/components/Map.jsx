@@ -11,22 +11,14 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { getColorFromValue } from '../utils/colorUtils'
 import { getDepartmentDataFromDB } from '../utils/departmentData'
 
-const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirstResultChange, highlightedIndex, onResultsCountChange, onAllResultsChange, selectedDay = 0 }) => {
+const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirstResultChange, highlightedIndex, onResultsCountChange, onAllResultsChange }) => {
   const mapRef = useRef()
   const mapInstanceRef = useRef(null)
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, content: '' })
   const [departmentData, setDepartmentData] = useState({})
-  const [loading, setLoading] = useState(true)
-  const [departmentsLoaded, setDepartmentsLoaded] = useState(false)
   const departmentsLayerRef = useRef(null)
   const [searchResults, setSearchResults] = useState([])
   const [showResults, setShowResults] = useState(false)
-  const selectedDayRef = useRef(selectedDay)
-
-  // Actualizar la referencia cuando cambia selectedDay
-  useEffect(() => {
-    selectedDayRef.current = selectedDay
-  }, [selectedDay])
 
   useEffect(() => {
     const loadDepartmentData = async () => {
@@ -45,12 +37,6 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
 
     loadDepartmentData()
   }, [])
-
-  useEffect(() => {
-    if (departmentsLoaded && Object.keys(departmentData).length > 0) {
-      setLoading(false)
-    }
-  }, [departmentsLoaded, departmentData])
 
   useEffect(() => {
     const baseLayer = new TileLayer({
@@ -77,19 +63,12 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
       format: new GeoJSON()
     })
 
-    departmentsSource.on('featuresloadend', () => {
-      setDepartmentsLoaded(true)
-    })
 
-    departmentsSource.on('featuresloaderror', () => {
-      console.error('Error loading departments GeoJSON')
-      setDepartmentsLoaded(true) 
-    })
 
     const departmentStyleFunction = (feature) => {
       const departmentId = feature.get('in1')
       const departmentRisks = departmentData[departmentId]
-      const value = departmentRisks ? departmentRisks[`riesgo${selectedDayRef.current}`] : null
+      const value = departmentRisks ? departmentRisks.riesgo : null
       const fillColor = getColorFromValue(value)
       
       return new Style({
@@ -131,9 +110,9 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
 
       if (feature) {
         const departmentId = feature.get('in1')
-        const departmentName = feature.get('nam')
+        const departmentName = feature.get('NAM')
         const departmentRisks = departmentData[departmentId]
-        const value = departmentRisks ? departmentRisks[`riesgo${selectedDayRef.current}`] : null
+        const value = departmentRisks ? departmentRisks.riesgo : null
         const formattedValue = value !== null ? `${(value * 100).toFixed(1)}%` : 'Sin datos'
         
         setTooltip({
@@ -152,18 +131,6 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
 
     return () => map.setTarget(null)
   }, [departmentData])
-
-  // Actualizar el estilo del mapa cuando cambia el día seleccionado
-  useEffect(() => {
-    if (departmentsLayerRef.current) {
-      // Forzar el redibujado de la capa
-      const source = departmentsLayerRef.current.getSource()
-      if (source) {
-        source.changed()
-      }
-      departmentsLayerRef.current.changed()
-    }
-  }, [selectedDay])
 
   // Handle search functionality
   useEffect(() => {
@@ -197,12 +164,12 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
     // Find all matching departments
     const matches = features
       .filter(feature => {
-        const name = feature.get('nam') || ''
+        const name = feature.get('NAM') || ''
         const normalizedName = normalizeString(name)
         return normalizedName.includes(normalizedQuery)
       })
       .map(feature => ({
-        name: feature.get('nam'),
+        name: feature.get('NAM'),
         id: feature.get('in1'),
         feature: feature
       }))
@@ -239,13 +206,6 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
         flex: 1
       }}></div>
       
-      {loading && (
-        <div className="map-loading">
-          <div className="map-loading-spinner"></div>
-          Cargando datos de inundaciones...
-        </div>
-      )}
-      
       {tooltip.visible && (
         <div
           style={{
@@ -280,8 +240,7 @@ FloodMap.propTypes = {
   onFirstResultChange: PropTypes.func,
   highlightedIndex: PropTypes.number,
   onResultsCountChange: PropTypes.func,
-  onAllResultsChange: PropTypes.func,
-  selectedDay: PropTypes.number
+  onAllResultsChange: PropTypes.func
 }
 
 export default FloodMap

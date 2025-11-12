@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import FloodMap from './Map'
 import MapLegend from './MapLegend'
-import DaySelector from './DaySelector'
 import Logo from './Logo'
 import './MapApp.css'
 
@@ -15,7 +14,6 @@ const MapApp = () => {
   const [highlightedIndex, setHighlightedIndex] = useState(0)
   const [resultsCount, setResultsCount] = useState(0)
   const [allResults, setAllResults] = useState([])
-  const [selectedDay, setSelectedDay] = useState(0)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -168,13 +166,8 @@ const MapApp = () => {
             highlightedIndex={highlightedIndex}
             onResultsCountChange={setResultsCount}
             onAllResultsChange={setAllResults}
-            selectedDay={selectedDay}
           />
           <MapLegend />
-          <DaySelector 
-            selectedDay={selectedDay}
-            onDayChange={setSelectedDay}
-          />
         </div>
       </main>
     </div>
