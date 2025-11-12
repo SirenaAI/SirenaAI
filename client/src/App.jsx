@@ -51,6 +51,7 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </Router>

@@ -66,7 +66,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
 
 
     const departmentStyleFunction = (feature) => {
-      const departmentId = feature.get('in1')
+      const departmentId = feature.get('IN1')
       const departmentRisks = departmentData[departmentId]
       const value = departmentRisks ? departmentRisks.riesgo : null
       const fillColor = getColorFromValue(value)
@@ -109,7 +109,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
       })
 
       if (feature) {
-        const departmentId = feature.get('in1')
+        const departmentId = feature.get('IN1')
         const departmentName = feature.get('NAM')
         const departmentRisks = departmentData[departmentId]
         const value = departmentRisks ? departmentRisks.riesgo : null
@@ -170,7 +170,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
       })
       .map(feature => ({
         name: feature.get('NAM'),
-        id: feature.get('in1'),
+        id: feature.get('IN1'),
         feature: feature
       }))
       .slice(0, 10) // Limit to 10 results
