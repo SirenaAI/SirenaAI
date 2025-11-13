@@ -262,22 +262,15 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
             </>
           )}
 
-          <div className="password-group">
-            <Input
-              type="password"
-              name="password"
-              placeholder="Contraseña"
-              value={formData.password}
-              onChange={handleInputChange}
-              disabled={loading}
-              icon={lockIcon}
-            />
-            {isLogin && (
-              <a href="#" className="forgot-password" onClick={(e) => e.preventDefault()}>
-                Olvidé mi contraseña
-              </a>
-            )}
-          </div>
+          <Input
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            value={formData.password}
+            onChange={handleInputChange}
+            disabled={loading}
+            icon={lockIcon}
+          />
 
           {!isLogin && (
             <Input
