@@ -114,18 +114,8 @@
   min-height: 0;
 }
 
-.auth-card > .close-button,
 .auth-card > .auth-header {
-  padding: 0 48px;
-}
-
-.auth-card > .close-button {
-  padding: 24px 24px 0;
-}
-
-.auth-card > .auth-header {
-  padding-top: 48px;
-  padding-bottom: 24px;
+  padding: 48px;
 }
 
 .auth-form::-webkit-scrollbar {
@@ -147,14 +137,13 @@
 
 .close-button {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  width: 36px;
-  height: 36px;
+  top: 48px;
+  left: 48px;
+  width: 40px;
+  height: 40px;
   border: none;
   background: transparent;
-  color: #6B7280;
-  font-size: 28px;
+  color: #1F2937;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -162,12 +151,18 @@
   border-radius: 8px;
   transition: all 0.2s ease;
   line-height: 1;
-  padding: 0;
+  padding: 6px;
+}
+
+.close-button svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  flex-shrink: 0;
 }
 
 .close-button:hover {
   background-color: #F3F4F6;
-  color: #1F2937;
   transform: scale(1.05);
 }
 
@@ -443,7 +438,7 @@
 
   .close-button {
     top: 20px;
-    right: 20px;
+    left: 20px;
     width: 32px;
     height: 32px;
     font-size: 24px;
@@ -478,6 +473,6 @@
 
   .close-button {
     top: 16px;
-    right: 16px;
+    left: 16px;
   }
 }

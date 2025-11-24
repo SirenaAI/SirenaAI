@@ -21,6 +21,14 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
   const { login, register, loginWithGoogle, loading, error } = useAuth()
 
   useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [])
+
+  useEffect(() => {
     setIsLogin(initialMode === 'login')
   }, [initialMode])
 
@@ -218,7 +226,9 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
       </div>
       <div className="auth-card">
         <button className="close-button" onClick={onClose}>
-          ×
+          <svg width="24" height="24" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M26.5 15H3.5M3.5 15L12.125 24M3.5 15L12.125 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
         
         <div className="auth-header">
