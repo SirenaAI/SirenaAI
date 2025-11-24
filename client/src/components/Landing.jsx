@@ -177,7 +177,7 @@ const Landing = () => {
               <div className="beneficiary-header">
                 <div className="beneficiary-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
-                  <path d="M24 18H21V21H24M24 12H21V15H24M27 24H15V21H18V18H15V15H18V12H15V9H27M12 6H9V3H12M12 12H9V9H12M12 18H9V15H12M12 24H9V21H12M6 6H3V3H6M6 12H3V9H6M6 18H3V15H6M6 24H3V21H6M15 6V0H0V27H30V6H15Z" fill="#58929D"/>
+                    <path d="M24 18H21V21H24M24 12H21V15H24M27 24H15V21H18V18H15V15H18V12H15V9H27M12 6H9V3H12M12 12H9V9H12M12 18H9V15H12M12 24H9V21H12M6 6H3V3H6M6 12H3V9H6M6 18H3V15H6M6 24H3V21H6M15 6V0H0V27H30V6H15Z" fill="#58929D"/>
                   </svg>  
                 </div>
                 <h3 className="h3">Administraciones públicas</h3>
@@ -190,9 +190,9 @@ const Landing = () => {
             <div className="beneficiary-card">
               <div className="beneficiary-header">
                 <div className="beneficiary-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="189.21 89.211 30 30" width="30px" height="30px">
-                  <path d="M 204.21 89.211 C 200.067 89.211 196.71 92.567 196.71 96.711 C 196.71 100.855 200.067 104.211 204.21 104.211 C 208.354 104.211 211.71 100.855 211.71 96.711 C 211.71 92.567 208.354 89.211 204.21 89.211 Z M 204.21 106.086 C 199.204 106.086 189.21 108.599 189.21 113.586 L 189.21 119.211 L 219.21 119.211 L 219.21 113.586 C 219.21 108.599 209.217 106.086 204.21 106.086 Z" fill="#58929D" style={{ strokeWidth: 1 }} transform="matrix(1, 0, 0, 1, -1.4210854715202004e-14, -7.105427357601002e-15)"/>
-                </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="189.21 89.211 30 30" width="30px" height="30px">
+                    <path d="M 204.21 89.211 C 200.067 89.211 196.71 92.567 196.71 96.711 C 196.71 100.855 200.067 104.211 204.21 104.211 C 208.354 104.211 211.71 100.855 211.71 96.711 C 211.71 92.567 208.354 89.211 204.21 89.211 Z M 204.21 106.086 C 199.204 106.086 189.21 108.599 189.21 113.586 L 189.21 119.211 L 219.21 119.211 L 219.21 113.586 C 219.21 108.599 209.217 106.086 204.21 106.086 Z" fill="#58929D" style={{ strokeWidth: 1 }} transform="matrix(1, 0, 0, 1, -1.4210854715202004e-14, -7.105427357601002e-15)"/>
+                  </svg>
                 </div>
                 <h3 className="h3">Otras entidades</h3>
               </div>

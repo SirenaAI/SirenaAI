@@ -11,14 +11,12 @@ import GeoJSON from 'ol/format/GeoJSON'
 import { getColorFromValue } from '../utils/colorUtils'
 import { getDepartmentDataFromDB } from '../utils/departmentData'
 
-const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirstResultChange, highlightedIndex, onResultsCountChange, onAllResultsChange }) => {
+const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirstResultChange, _highlightedIndex, onResultsCountChange, onAllResultsChange }) => {
   const mapRef = useRef()
   const mapInstanceRef = useRef(null)
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, content: '' })
   const [departmentData, setDepartmentData] = useState({})
   const departmentsLayerRef = useRef(null)
-  const [searchResults, setSearchResults] = useState([])
-  const [showResults, setShowResults] = useState(false)
 
   useEffect(() => {
     const loadDepartmentData = async () => {
@@ -93,8 +91,8 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
       target: mapRef.current,
       layers: [baseLayer, ignLayer, departmentsLayer],
       view: new View({
-        center: fromLonLat([-63.6167, -38.4161]),
-        zoom: 5 
+        center: fromLonLat([-64, -41.5]),
+        zoom: 4.8 
       })
     })
 
@@ -135,8 +133,6 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
   // Handle search functionality
   useEffect(() => {
     if (!searchQuery || !departmentsLayerRef.current) {
-      setSearchResults([])
-      setShowResults(false)
       onFirstResultChange?.(null)
       onResultsCountChange?.(0)
       onAllResultsChange?.([])
@@ -175,8 +171,6 @@ const FloodMap = ({ searchQuery, selectedDepartment, onDepartmentSelect, onFirst
       }))
       .slice(0, 10) // Limit to 10 results
 
-    setSearchResults(matches)
-    setShowResults(matches.length > 0)
     onFirstResultChange?.(matches[0] || null)
     onResultsCountChange?.(matches.length)
     onAllResultsChange?.(matches)
@@ -236,9 +230,9 @@ FloodMap.propTypes = {
     id: PropTypes.string,
     feature: PropTypes.object
   }),
-  onDepartmentSelect: PropTypes.func,
+  _onDepartmentSelect: PropTypes.func,
   onFirstResultChange: PropTypes.func,
-  highlightedIndex: PropTypes.number,
+  _highlightedIndex: PropTypes.number,
   onResultsCountChange: PropTypes.func,
   onAllResultsChange: PropTypes.func
 }
