@@ -55,11 +55,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en login:', error)
-      const errorMessage = error.message.includes('401') 
-        ? 'Usuario o contraseña incorrectos' 
-        : error.message.includes('400')
-          ? 'Faltan datos requeridos'
-          : 'Error de conexión con el servidor'
+      
+      // Usar el mensaje de error del servidor si está disponible
+      const errorMessage = error.message || 'Error de conexión con el servidor'
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -82,11 +80,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en registro:', error)
-      const errorMessage = error.message.includes('409') 
-        ? 'El usuario ya existe' 
-        : error.message.includes('400')
-          ? 'Faltan datos requeridos'
-          : 'Error de conexión con el servidor'
+      
+      // Usar el mensaje de error del servidor si está disponible
+      const errorMessage = error.message || 'Error de conexión con el servidor'
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -122,11 +118,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en login con Google:', error)
-      const errorMessage = error.message.includes('401') 
-        ? 'Error de autenticación con Google' 
-        : error.message.includes('409')
-          ? 'Error al crear cuenta con Google'
-          : 'Error de conexión con el servidor'
+      
+      // Usar el mensaje de error del servidor si está disponible
+      const errorMessage = error.message || 'Error de conexión con el servidor'
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
