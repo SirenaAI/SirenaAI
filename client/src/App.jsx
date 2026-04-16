@@ -5,10 +5,13 @@ import Landing from './components/Landing'
 import MapApp from './components/MapApp'
 import ContactPage from './components/ContactPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import { useLanguage } from './hooks/useLanguage'
 import api from './api'
 import './App.css'
 
 function App() {
+  const { language, toggleLanguage, t } = useLanguage()
+
   useEffect(() => {
     const checkConnections = async () => {
       try {
@@ -40,6 +43,15 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
+          <button
+            type="button"
+            className="language-toggle"
+            onClick={toggleLanguage}
+            aria-label={language === 'es' ? t('language.switchToEnglish') : t('language.switchToSpanish')}
+            title={language === 'es' ? t('language.switchToEnglish') : t('language.switchToSpanish')}
+          >
+            {language === 'es' ? t('language.toEnglish') : t('language.toSpanish')}
+          </button>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/contacto" element={<ContactPage />} />

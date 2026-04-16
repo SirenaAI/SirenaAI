@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import Input from './Input'
 import Button from './Button'
+import { useLanguage } from '../hooks/useLanguage'
 import sirenaLogo from './sirena-light.svg'
 import './Auth.css'
 
@@ -17,6 +18,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
   const [localError, setLocalError] = useState('')
   const [success, setSuccess] = useState('')
   const [googleLoaded, setGoogleLoaded] = useState(false)
+  const { t } = useLanguage()
 
   const { login, register, loginWithGoogle, loading, error } = useAuth()
 
@@ -39,15 +41,15 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
       const result = await loginWithGoogle(response.credential)
       
       if (result.success) {
-        setSuccess('¡Login con Google exitoso!')
+        setSuccess(t('auth.googleLoginSuccess'))
         setTimeout(() => {
           onClose && onClose()
         }, 1500)
       }
     } catch {
-      setLocalError('Error al procesar login con Google')
+      setLocalError(t('auth.googleLoginError'))
     }
-  }, [loginWithGoogle, onClose])
+  }, [loginWithGoogle, onClose, t])
 
   useEffect(() => {
     const loadGoogleScript = () => {
@@ -116,36 +118,36 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
 
   const validateForm = () => {
     if (!formData.username.trim()) {
-      setLocalError('El nombre de usuario es requerido')
+      setLocalError(t('auth.usernameRequired'))
       return false
     }
     
     if (!isLogin) {
       if (!formData.email.trim()) {
-        setLocalError('El email es requerido')
+        setLocalError(t('auth.emailRequired'))
         return false
       }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(formData.email)) {
-        setLocalError('Por favor ingresa un email válido')
+        setLocalError(t('auth.invalidEmail'))
         return false
       }
       if (!formData.nombre.trim()) {
-        setLocalError('El nombre completo es requerido')
+        setLocalError(t('auth.fullNameRequired'))
         return false
       }
     }
     
     if (!formData.password.trim()) {
-      setLocalError('La contraseña es requerida')
+      setLocalError(t('auth.passwordRequired'))
       return false
     }
     if (formData.password.length < 6) {
-      setLocalError('La contraseña debe tener al menos 6 caracteres')
+      setLocalError(t('auth.minPassword'))
       return false
     }
     if (!isLogin && formData.password !== formData.confirmPassword) {
-      setLocalError('Las contraseñas no coinciden')
+      setLocalError(t('auth.passwordMismatch'))
       return false
     }
     return true
@@ -160,7 +162,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
       if (isLogin) {
         const result = await login(formData.username, formData.password)
         if (result.success) {
-          setSuccess('¡Login exitoso!')
+          setSuccess(t('auth.loginSuccess'))
           setTimeout(() => {
             onClose && onClose()
           }, 1500)
@@ -168,7 +170,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
       } else {
         const result = await register(formData.username, formData.email, formData.nombre, formData.password)
         if (result.success) {
-          setSuccess('¡Usuario creado exitosamente!')
+          setSuccess(t('auth.registerSuccess'))
           setTimeout(() => {
             setIsLogin(true)
             setFormData({
@@ -183,7 +185,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
         }
       }
     } catch {
-      setLocalError('Error inesperado')
+      setLocalError(t('auth.unexpectedError'))
     }
   }
 
@@ -233,7 +235,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
         
         <div className="auth-header">
           <h1 className="display-medium">
-            {isLogin ? 'Inicio de sesión' : 'Registro'}
+            {isLogin ? t('auth.loginTitle') : t('auth.registerTitle')}
           </h1>
         </div>
 
@@ -241,7 +243,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
           <Input
             type="text"
             name="username"
-            placeholder="Usuario"
+            placeholder={t('auth.usernamePlaceholder')}
             value={formData.username}
             onChange={handleInputChange}
             disabled={loading}
@@ -253,7 +255,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
               <Input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder={t('auth.emailPlaceholder')}
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -263,7 +265,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
               <Input
                 type="text"
                 name="nombre"
-                placeholder="Nombre completo"
+                placeholder={t('auth.fullNamePlaceholder')}
                 value={formData.nombre}
                 onChange={handleInputChange}
                 disabled={loading}
@@ -275,7 +277,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
           <Input
             type="password"
             name="password"
-            placeholder="Contraseña"
+            placeholder={t('auth.passwordPlaceholder')}
             value={formData.password}
             onChange={handleInputChange}
             disabled={loading}
@@ -286,7 +288,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
             <Input
               type="password"
               name="confirmPassword"
-              placeholder="Confirmar contraseña"
+              placeholder={t('auth.confirmPasswordPlaceholder')}
               value={formData.confirmPassword}
               onChange={handleInputChange}
               disabled={loading}
@@ -315,18 +317,18 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
               className="auth-submit"
               disabled={loading}
             >
-              {loading ? 'Procesando...' : (isLogin ? 'Iniciar sesión' : 'Registrarse')}
+              {loading ? t('auth.processing') : (isLogin ? t('auth.loginButton') : t('auth.registerButton'))}
             </Button>
             
             <div className="auth-divider">
-              <span className="body-medium">o</span>
+              <span className="body-medium">{t('auth.or')}</span>
             </div>
 
             <div id="google-signin-button"></div>
             
             <div className="auth-switch">
               <span className="body-medium">
-                {isLogin ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?'}
+                {isLogin ? t('auth.noAccount') : t('auth.hasAccount')}
               </span>
               <button 
                 type="button"
@@ -334,7 +336,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
                 onClick={switchMode}
                 disabled={loading}
               >
-                {isLogin ? 'Crea una cuenta' : 'Iniciar sesión'}
+                {isLogin ? t('auth.createAccount') : t('auth.loginButton')}
               </button>
             </div>
           </div>

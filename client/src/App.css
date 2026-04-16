@@ -4,3 +4,35 @@
   margin: 0;
   padding: 0;
 }
+
+.language-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1200;
+  min-width: 52px;
+  height: 36px;
+  border: 1px solid var(--sirena-border);
+  border-radius: 999px;
+  background-color: var(--sirena-white);
+  color: var(--sirena-dark);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.language-toggle:hover {
+  background-color: var(--sirena-lightest);
+  border-color: var(--sirena-primary);
+}
+
+@media (max-width: 768px) {
+  .language-toggle {
+    top: 12px;
+    right: 12px;
+    min-width: 48px;
+    height: 34px;
+  }
+}

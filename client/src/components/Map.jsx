@@ -10,6 +10,7 @@ import { Style, Fill, Stroke } from 'ol/style'
 import GeoJSON from 'ol/format/GeoJSON'
 import { getColorFromValue } from '../utils/colorUtils'
 import { getDepartmentDataFromDB } from '../utils/departmentData'
+import { useLanguage } from '../hooks/useLanguage'
 
 const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirstResultChange, _highlightedIndex, onResultsCountChange, onAllResultsChange }) => {
   const mapRef = useRef()
@@ -17,6 +18,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirs
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, content: '' })
   const [departmentData, setDepartmentData] = useState({})
   const departmentsLayerRef = useRef(null)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const loadDepartmentData = async () => {
@@ -111,7 +113,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirs
         const departmentName = feature.get('NAM')
         const departmentRisks = departmentData[departmentId]
         const value = departmentRisks ? departmentRisks.riesgo : null
-        const formattedValue = value !== null ? `${(value * 100).toFixed(1)}%` : 'Sin datos'
+        const formattedValue = value !== null ? `${(value * 100).toFixed(1)}%` : t('map.noData')
         
         setTooltip({
           visible: true,
@@ -128,7 +130,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirs
     })
 
     return () => map.setTarget(null)
-  }, [departmentData])
+  }, [departmentData, t])
 
   // Handle search functionality
   useEffect(() => {

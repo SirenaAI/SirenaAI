@@ -5,11 +5,25 @@ import Auth from './Auth'
 import Header from './Header'
 import Footer from './Footer'
 import Button from './Button'
+import { useLanguage } from '../hooks/useLanguage'
 import './Landing.css'
 
 const Landing = () => {
   const [showAuth, setShowAuth] = useState(false)
   const { isAuthenticated } = useAuth()
+  const { t } = useLanguage()
+
+  const renderStat = (key) => {
+    const [line1, line2] = t(key).split('\n')
+
+    return (
+      <p className="display-small">
+        {line1}
+        <br />
+        {line2}
+      </p>
+    )
+  }
 
   return (
     <div className="landing-page">
@@ -20,16 +34,16 @@ const Landing = () => {
         <div className="hero-container">
           <div className="hero-content">
             <h1 className="display-medium">
-              Predicción de <br />
-              inundaciones con IA
+              {t('landing.heroTitleLine1')} <br />
+              {t('landing.heroTitleLine2')}
             </h1>
             <p className="h3" style={{ color: 'rgba(3, 15, 73, 0.7)' }}>
-              Anticipamos las lluvias, prevenimos riesgos
+              {t('landing.heroSubtitle')}
             </p>
             {isAuthenticated() ? (
               <Link to="/app">
                 <Button variant="solid" color="primary" size="large">
-                  Acceder al Mapa
+                  {t('landing.accessMap')}
                 </Button>
               </Link>
             ) : (
@@ -39,12 +53,12 @@ const Landing = () => {
                 size="large"
                 onClick={() => setShowAuth(true)}
               >
-                Empezar ➜
+                {t('landing.getStarted')}
               </Button>
             )}
           </div>
           <div className="hero-image">
-            <img src="/Imagen-inicio.png" alt="Predicción de inundaciones" />
+            <img src="/Imagen-inicio.png" alt={t('landing.heroImageAlt')} />
           </div>
         </div>
       </section>
@@ -53,26 +67,23 @@ const Landing = () => {
       <section className="about-section">
         <div className="about-container">
           <div className="about-text">
-            <h2 className="display-small">Nuestro proyecto</h2>
+            <h2 className="display-small">{t('landing.projectTitle')}</h2>
             <p className="body-medium">
-              Sirena es una herramienta de inteligencia artificial que predice zonas con riesgo de
-              inundación en Argentina. Analiza datos meteorológicos, del terreno y del sistema de
-              desagües para anticipar posibles eventos y reducir daños. Nuestro objetivo es brindar
-              información precisa para la prevención y gestión del riesgo hídrico.
+              {t('landing.projectDescription')}
             </p>
           </div>
           <div className="about-stats">
             <div className="stat-card">
-              <p className="display-small">+200<br/>Localidades</p>
+              {renderStat('landing.statsLocalities')}
             </div>
             <div className="stat-card">
-              <p className="display-small">+10<br/>Databases</p>
+              {renderStat('landing.statsDatabases')}
             </div>
             <div className="stat-card">
-              <p className="display-small">90%<br/>Precisión</p>
+              {renderStat('landing.statsPrecision')}
             </div>
             <div className="stat-card">
-              <p className="display-small">+1.000<br/>Datos utilizados</p>
+              {renderStat('landing.statsDataUsed')}
             </div>
           </div>
         </div>
@@ -81,7 +92,7 @@ const Landing = () => {
       {/* AI Technology Section */}
       <section className="ai-section">
         <div className="ai-container">
-          <h2 className="display-small">Nuestra tecnología predictiva</h2>
+          <h2 className="display-small">{t('landing.technologyTitle')}</h2>
           <div className="ai-cards">
             <div className="ai-card">
               <div className="ai-icon">
@@ -90,10 +101,9 @@ const Landing = () => {
                 </svg>
 
               </div>
-              <h3 className="body-large">Recolección y preparación de datos</h3>
+              <h3 className="body-large">{t('landing.dataPrepTitle')}</h3>
               <p className="body-medium">
-                Recopilamos datos climáticos, hidrológicos y geográficos de múltiples fuentes. 
-                Los datos se limpian, normalizan y estructuran para ser procesados por nuestros modelos de IA.
+                {t('landing.dataPrepDescription')}
               </p>
             </div>
             <div className="ai-card">
@@ -106,10 +116,9 @@ const Landing = () => {
                 </svg>
 
               </div>
-              <h3 className="body-large">Análisis predictivo</h3>
+              <h3 className="body-large">{t('landing.predictiveAnalysisTitle')}</h3>
               <p className="body-medium">
-                Utilizamos algoritmos de machine learning que analizan patrones históricos y datos en tiempo real 
-                para predecir zonas de riesgo de inundación con alta precisión.
+                {t('landing.predictiveAnalysisDescription')}
               </p>
             </div>
             <div className="ai-card">
@@ -128,10 +137,9 @@ const Landing = () => {
 
 
               </div>
-              <h3 className="body-large">Evaluación y mejora del modelo</h3>
+              <h3 className="body-large">{t('landing.modelImprovementTitle')}</h3>
               <p className="body-medium">
-                Monitoreamos continuamente el desempeño del modelo y lo actualizamos con nuevos datos 
-                para mejorar la precisión de las predicciones.
+                {t('landing.modelImprovementDescription')}
               </p>
             </div>
           </div>
@@ -141,7 +149,7 @@ const Landing = () => {
       {/* Beneficiaries Section */}
       <section className="beneficiaries-section">
         <div className="beneficiaries-container">
-          <h2 className="display-small">Impacto y alcance de nuestro proyecto</h2>
+          <h2 className="display-small">{t('landing.impactTitle')}</h2>
           <div className="beneficiaries-cards">
             <div className="beneficiary-card">
               <div className="beneficiary-header">
@@ -151,11 +159,10 @@ const Landing = () => {
                   </svg>
 
                 </div>
-                <h3 className="h3">Población Civil</h3>
+                <h3 className="h3">{t('landing.civilPopulationTitle')}</h3>
               </div>
               <p className="body-medium">
-                Las comunidades en zonas de riesgo pueden acceder a información anticipada y confiable
-                sobre posibles inundaciones, lo que les permite tomar medidas preventivas y reducir daños.
+                {t('landing.civilPopulationDescription')}
               </p>
             </div>
             <div className="beneficiary-card">
@@ -166,11 +173,10 @@ const Landing = () => {
                   </svg>
 
                 </div>
-                <h3 className="h3">Empresas e industria</h3>
+                <h3 className="h3">{t('landing.businessTitle')}</h3>
               </div>
               <p className="body-medium">
-                El acceso a datos predictivos ayuda a las empresas a planificar su producción, proteger
-                sus infraestructuras y minimizar pérdidas frente a eventos climáticos extremos.
+                {t('landing.businessDescription')}
               </p>
             </div>
             <div className="beneficiary-card">
@@ -180,11 +186,10 @@ const Landing = () => {
                     <path d="M24 18H21V21H24M24 12H21V15H24M27 24H15V21H18V18H15V15H18V12H15V9H27M12 6H9V3H12M12 12H9V9H12M12 18H9V15H12M12 24H9V21H12M6 6H3V3H6M6 12H3V9H6M6 18H3V15H6M6 24H3V21H6M15 6V0H0V27H30V6H15Z" fill="#58929D"/>
                   </svg>  
                 </div>
-                <h3 className="h3">Administraciones públicas</h3>
+                <h3 className="h3">{t('landing.publicAdminTitle')}</h3>
               </div>
               <p className="body-medium">
-                Los gobiernos locales y organismos estatales pueden usar los análisis del sistema para
-                diseñar políticas de prevención, respuesta y gestión del riesgo hídrico.
+                {t('landing.publicAdminDescription')}
               </p>
             </div>
             <div className="beneficiary-card">
@@ -194,11 +199,10 @@ const Landing = () => {
                     <path d="M 204.21 89.211 C 200.067 89.211 196.71 92.567 196.71 96.711 C 196.71 100.855 200.067 104.211 204.21 104.211 C 208.354 104.211 211.71 100.855 211.71 96.711 C 211.71 92.567 208.354 89.211 204.21 89.211 Z M 204.21 106.086 C 199.204 106.086 189.21 108.599 189.21 113.586 L 189.21 119.211 L 219.21 119.211 L 219.21 113.586 C 219.21 108.599 209.217 106.086 204.21 106.086 Z" fill="#58929D" style={{ strokeWidth: 1 }} transform="matrix(1, 0, 0, 1, -1.4210854715202004e-14, -7.105427357601002e-15)"/>
                   </svg>
                 </div>
-                <h3 className="h3">Otras entidades</h3>
+                <h3 className="h3">{t('landing.otherEntitiesTitle')}</h3>
               </div>
               <p className="body-medium">
-                Instituciones académicas, organizaciones ambientales y grupos de investigación pueden
-                aprovechar los datos generados por SIRENA para estudios y desarrollo de proyectos sostenibles.
+                {t('landing.otherEntitiesDescription')}
               </p>
             </div>
           </div>

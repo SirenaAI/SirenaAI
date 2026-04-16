@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import AuthContext from '../contexts/AuthContext'
 import api from '../api'
+import { useLanguage } from '../hooks/useLanguage'
 
 export const AuthProvider = ({ children }) => {
+  const { t } = useLanguage()
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [loading, setLoading] = useState(true)
@@ -51,13 +53,13 @@ export const AuthProvider = ({ children }) => {
         
         return { success: true, message: response.message }
       } else {
-        throw new Error('Respuesta inválida del servidor')
+        throw new Error(t('auth.invalidServerResponse'))
       }
     } catch (error) {
       console.error('Error en login:', error)
       
       // Usar el mensaje de error del servidor si está disponible
-      const errorMessage = error.message || 'Error de conexión con el servidor'
+      const errorMessage = error.message || t('auth.connectionError')
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -76,13 +78,13 @@ export const AuthProvider = ({ children }) => {
       if (response.message && response.usuario) {
         return { success: true, message: response.message }
       } else {
-        throw new Error('Respuesta inválida del servidor')
+        throw new Error(t('auth.invalidServerResponse'))
       }
     } catch (error) {
       console.error('Error en registro:', error)
       
       // Usar el mensaje de error del servidor si está disponible
-      const errorMessage = error.message || 'Error de conexión con el servidor'
+      const errorMessage = error.message || t('auth.connectionError')
       
       setError(errorMessage)
       return { success: false, error: errorMessage }
@@ -114,13 +116,13 @@ export const AuthProvider = ({ children }) => {
         
         return { success: true, message: response.message }
       } else {
-        throw new Error('Respuesta inválida del servidor')
+        throw new Error(t('auth.invalidServerResponse'))
       }
     } catch (error) {
       console.error('Error en login con Google:', error)
       
       // Usar el mensaje de error del servidor si está disponible
-      const errorMessage = error.message || 'Error de conexión con el servidor'
+      const errorMessage = error.message || t('auth.connectionError')
       
       setError(errorMessage)
       return { success: false, error: errorMessage }

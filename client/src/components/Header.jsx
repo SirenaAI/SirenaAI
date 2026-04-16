@@ -5,11 +5,13 @@ import Logo from './Logo'
 import Button from './Button'
 import Auth from './Auth'
 import { useAuth } from '../hooks/useAuth'
+import { useLanguage } from '../hooks/useLanguage'
 
 const Header = ({ onAuthOpen }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { isAuthenticated, user, logout } = useAuth()
+  const { t } = useLanguage()
   const [showAuth, setShowAuth] = useState(false)
   const [authMode, setAuthMode] = useState('login') // 'login' or 'register'
   
@@ -18,7 +20,7 @@ const Header = ({ onAuthOpen }) => {
   }
 
   const handleLogout = () => {
-    if (window.confirm('¿Estás seguro que deseas cerrar sesión?')) {
+    if (window.confirm(t('header.confirmLogout'))) {
       logout()
       navigate('/')
     }
@@ -47,20 +49,20 @@ const Header = ({ onAuthOpen }) => {
               to="/" 
               className={`header-link ${isActive('/') ? 'active' : ''}`}
             >
-            Inicio
+            {t('header.home')}
             </Link>
             <Link 
               to="/contacto" 
               className={`header-link ${isActive('/contacto') ? 'active' : ''}`}
             >
-            Contacto
+            {t('header.contact')}
             </Link>
             {isAuthenticated() && (
               <Link 
                 to="/app" 
                 className={`header-link ${isActive('/app') ? 'active' : ''}`}
               >
-              Mapa
+              {t('header.map')}
               </Link>
             )}
           </nav>
@@ -69,14 +71,14 @@ const Header = ({ onAuthOpen }) => {
             {isAuthenticated() ? (
               <>
                 <span className="header-user body-medium">
-                Hola, {user?.nombre || user?.username}
+                {t('header.greeting', { name: user?.nombre || user?.username })}
                 </span>
                 <Button 
                   variant="border" 
                   size="small"
                   onClick={handleLogout}
                 >
-                Cerrar Sesión
+                {t('header.logout')}
                 </Button>
               </>
             ) : (
@@ -87,14 +89,14 @@ const Header = ({ onAuthOpen }) => {
                   size="small"
                   onClick={() => handleOpenAuth('register')}
                 >
-                Sign up
+                {t('header.signUp')}
                 </Button>
                 <Button 
                   variant="border" 
                   size="small"
                   onClick={() => handleOpenAuth('login')}
                 >
-                Log In
+                {t('header.logIn')}
                 </Button>
               </>
             )}

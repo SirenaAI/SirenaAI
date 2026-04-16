@@ -1,8 +1,10 @@
 import { useAuth } from '../hooks/useAuth'
 import Auth from './Auth'
+import { useLanguage } from '../hooks/useLanguage'
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth()
+  const { t } = useLanguage()
 
   // Mostrar loading mientras se verifica la autenticación
   if (loading) {
@@ -25,7 +27,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
             animation: 'spin 1s linear infinite',
             margin: '0 auto 1rem'
           }}></div>
-          <p>Verificando autenticación...</p>
+          <p>{t('protectedRoute.checkingAuth')}</p>
         </div>
       </div>
     )

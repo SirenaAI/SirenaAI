@@ -6,9 +6,11 @@ import Footer from './Footer'
 import Input from './Input'
 import Button from './Button'
 import { useAuth } from '../hooks/useAuth'
+import { useLanguage } from '../hooks/useLanguage'
 
 const ContactPage = () => {
   const { user } = useAuth()
+  const { t } = useLanguage()
   
   const [formData, setFormData] = useState({
     nombre: '',
@@ -47,7 +49,7 @@ const ContactPage = () => {
     
     // Validación básica
     if (!formData.email || !formData.mensaje) {
-      setError('Por favor completa los campos requeridos')
+      setError(t('contact.requiredFields'))
       return
     }
     
@@ -62,14 +64,14 @@ const ContactPage = () => {
       
       // Verificar que las variables de entorno estén configuradas
       if (!serviceId || !templateId || !publicKey) {
-        throw new Error('EmailJS no está configurado. Por favor configura las variables de entorno.')
+        throw new Error(t('contact.emailNotConfigured'))
       }
       
       // Preparar los datos del template
       const templateParams = {
-        from_name: formData.nombre || 'Sin nombre',
+        from_name: formData.nombre || t('contact.unnamed'),
         from_email: formData.email,
-        phone: formData.telefono || 'No proporcionado',
+        phone: formData.telefono || t('contact.noPhone'),
         message: formData.mensaje,
         to_email: 'sirenaai2025@gmail.com'
       }
@@ -97,7 +99,7 @@ const ContactPage = () => {
       
     } catch (err) {
       console.error('Error al enviar el email:', err)
-      setError(err.message || 'Hubo un error al enviar el mensaje. Por favor intenta de nuevo.')
+      setError(err.message || t('contact.sendErrorFallback'))
     } finally {
       setIsSubmitting(false)
     }
@@ -110,39 +112,39 @@ const ContactPage = () => {
       <div className="contact-content">
         <div className="contact-banner">
           <h1 className="display-large">
-            ¿Listo para optimizar la detección de inundaciones?
+            {t('contact.bannerTitle')}
           </h1>
         </div>
 
         <div className="contact-form-section">
-          <h2 className="display-small">Contáctanos</h2>
+          <h2 className="display-small">{t('contact.title')}</h2>
           
           <form onSubmit={handleSubmit} className="contact-form">
             <div className="contact-form-grid">
               <Input
-                label="Nombre"
+                label={t('contact.nameLabel')}
                 type="text"
                 name="nombre"
-                placeholder="Tu nombre completo"
+                placeholder={t('contact.namePlaceholder')}
                 value={formData.nombre}
                 onChange={handleChange}
                 disabled={!!user}
               />
               
               <Input
-                label="Teléfono"
+                label={t('contact.phoneLabel')}
                 type="tel"
                 name="telefono"
-                placeholder="11 1234 5678"
+                placeholder={t('contact.phonePlaceholder')}
                 value={formData.telefono}
                 onChange={handleChange}
               />
               
               <Input
-                label="Mail"
+                label={t('contact.mailLabel')}
                 type="email"
                 name="email"
-                placeholder="mail@ejemplo.com"
+                placeholder={t('contact.mailPlaceholder')}
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -150,10 +152,10 @@ const ContactPage = () => {
               />
               
               <div className="input-wrapper">
-                <label className="input-label body-medium">Mensaje *</label>
+                <label className="input-label body-medium">{t('contact.messageLabel')} *</label>
                 <textarea
                   name="mensaje"
-                  placeholder="Escribe tu mensaje aquí..."
+                  placeholder={t('contact.messagePlaceholder')}
                   value={formData.mensaje}
                   onChange={handleChange}
                   className="contact-textarea body-medium"
@@ -170,7 +172,7 @@ const ContactPage = () => {
 
             {success && (
               <div className="contact-success body-medium">
-                ¡Mensaje enviado con éxito! Te contactaremos pronto.
+                {t('contact.sendSuccess')}
               </div>
             )}
 
@@ -182,7 +184,7 @@ const ContactPage = () => {
               className="contact-submit"
               disabled={success || isSubmitting}
             >
-              {isSubmitting ? 'Enviando...' : success ? 'Enviado ✓' : 'Enviar'}
+              {isSubmitting ? t('contact.sending') : success ? t('contact.sent') : t('contact.send')}
             </Button>
           </form>
         </div>

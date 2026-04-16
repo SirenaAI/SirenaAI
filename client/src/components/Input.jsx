@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLanguage } from '../hooks/useLanguage'
 import './Input.css'
 
 const Input = ({ 
@@ -16,6 +17,7 @@ const Input = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false)
   const isPassword = type === 'password'
+  const { language } = useLanguage()
 
   return (
     <div className={`input-wrapper ${className}`}>
@@ -40,7 +42,7 @@ const Input = ({
             type="button"
             className="input-toggle-password"
             onClick={() => setShowPassword(!showPassword)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? (language === 'en' ? 'Hide password' : 'Ocultar contrasena') : (language === 'en' ? 'Show password' : 'Mostrar contrasena')}
           >
             {showPassword ? (
               <svg width="20" height="16" viewBox="0 0 20 16" fill="none">
