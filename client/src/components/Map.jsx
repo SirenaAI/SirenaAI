@@ -4,7 +4,7 @@ import 'ol/ol.css'
 import './Map.css'
 import { Map, View } from 'ol'
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer'
-import { OSM, TileWMS, Vector as VectorSource } from 'ol/source'
+import { TileWMS, Vector as VectorSource, XYZ } from 'ol/source'
 import { fromLonLat } from 'ol/proj'
 import { Style, Fill, Stroke } from 'ol/style'
 import GeoJSON from 'ol/format/GeoJSON'
@@ -40,7 +40,11 @@ const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirs
 
   useEffect(() => {
     const baseLayer = new TileLayer({
-      source: new OSM()
+      source: new XYZ({
+        // Wikimedia supports forcing label language via `lang`.
+        url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png?lang=es',
+        attributions: '© OpenStreetMap contributors, Wikimedia maps'
+      })
     })
 
     const ignLayer = new TileLayer({
