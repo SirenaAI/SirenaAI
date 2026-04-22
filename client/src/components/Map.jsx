@@ -39,11 +39,11 @@ const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirs
   }, [])
 
   useEffect(() => {
-    const baseLayer = new TileLayer({
+    const ignBaseLayer = new TileLayer({
       source: new XYZ({
-        // Wikimedia supports forcing label language via `lang`.
-        url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png?lang=es',
-        attributions: '© OpenStreetMap contributors, Wikimedia maps'
+        url: 'https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png',
+        attributions: 'Leaflet | Instituto Geografico Nacional + OpenStreetMap',
+        transition: 0
       })
     })
 
@@ -95,7 +95,7 @@ const FloodMap = ({ searchQuery, selectedDepartment, _onDepartmentSelect, onFirs
 
     const map = new Map({
       target: mapRef.current,
-      layers: [baseLayer, ignLayer, departmentsLayer],
+      layers: [ignBaseLayer, ignLayer, departmentsLayer],
       view: new View({
         center: fromLonLat([-64, -41.5]),
         zoom: 4.8 
