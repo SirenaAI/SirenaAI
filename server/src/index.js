@@ -101,7 +101,7 @@ app.get('/inundaciones', async (req, res) => {
 
 app.post('/crearusuario', async (req, res) => {
   try {
-    const { username, email, nombre, password } = req.body;
+    const { username, email, nombre, password, departamentoPreferencia } = req.body;
     if (!username || !email || !nombre || !password) {
       return res.status(400).json({ error: 'Faltan datos requeridos (username, email, nombre, password)' });
     }
@@ -118,11 +118,15 @@ app.post('/crearusuario', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const departamentoNormalizado = typeof departamentoPreferencia === 'string' && departamentoPreferencia.trim()
+      ? departamentoPreferencia.trim()
+      : null;
+
     const result = await client.query(
-      `INSERT INTO usuario (username, email, nombre, password, fecha_creacion, ultimo_login) 
-       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
-       RETURNING username, email, nombre`,
-      [username, email, nombre, hashedPassword]
+      `INSERT INTO usuario (username, email, nombre, password, "Departamento_Preferencia", fecha_creacion, ultimo_login) 
+       VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+       RETURNING username, email, nombre, "Departamento_Preferencia"`,
+      [username, email, nombre, hashedPassword, departamentoNormalizado]
     );
 
     client.release();
@@ -191,7 +195,11 @@ app.post('/login', async (req, res) => {
 
 app.post('/auth/google', async (req, res) => {
   try {
-    const { credential } = req.body;
+    const credential =
+      req.body?.credential ||
+      req.body?.idToken ||
+      req.body?.id_token ||
+      req.body?.token;
     
     if (!credential) {
       return res.status(400).json({ error: 'Token de Google requerido' });

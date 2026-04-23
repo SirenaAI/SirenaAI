@@ -64,18 +64,27 @@ export const api = {
     })
   },
 
-  async loginWithGoogle(credential) {
+  async loginWithGoogle(googleResponse) {
+    const body = typeof googleResponse === 'string'
+      ? { credential: googleResponse }
+      : {
+          credential: googleResponse?.credential,
+          idToken: googleResponse?.idToken,
+          id_token: googleResponse?.id_token,
+          token: googleResponse?.token
+        }
+
     const respuesta = await this.request('/auth/google', {
       method: 'POST',
-      body: JSON.stringify({ credential })
+      body: JSON.stringify(body)
     })
     return respuesta
   },
 
-  async crearusuario(username, email, nombre, password) {
+  async crearusuario(username, email, nombre, password, departamentoPreferencia = null) {
     return this.request('/crearusuario', {
       method: 'POST',
-      body: JSON.stringify({ username, email, nombre, password })
+      body: JSON.stringify({ username, email, nombre, password, departamentoPreferencia })
     })
   }
 }

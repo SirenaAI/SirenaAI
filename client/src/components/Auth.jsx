@@ -7,14 +7,17 @@ import sirenaLogo from './sirena-light.svg'
 import './Auth.css'
 
 const Auth = ({ onClose, initialMode = 'login' }) => {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
   const [isLogin, setIsLogin] = useState(initialMode === 'login')
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     nombre: '',
+    departamentoPreferencia: '',
     password: '',
     confirmPassword: ''
   })
+  const [departmentOptions, setDepartmentOptions] = useState([])
   const [localError, setLocalError] = useState('')
   const [success, setSuccess] = useState('')
   const [googleLoaded, setGoogleLoaded] = useState(false)
@@ -37,8 +40,13 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
   const handleGoogleSignIn = useCallback(async (response) => {
     try {
       setLocalError('')
+
+      if (!response?.credential) {
+        setLocalError(t('auth.googleCredentialMissing'))
+        return
+      }
       
-      const result = await loginWithGoogle(response.credential)
+      const result = await loginWithGoogle(response)
       
       if (result.success) {
         setSuccess(t('auth.googleLoginSuccess'))
@@ -53,6 +61,11 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
 
   useEffect(() => {
     const loadGoogleScript = () => {
+      if (!googleClientId) {
+        setLocalError(t('auth.googleClientIdMissing'))
+        return
+      }
+
       if (window.google && window.google.accounts) {
         setGoogleLoaded(true)
         initializeGoogleSignIn()
@@ -77,7 +90,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
     const initializeGoogleSignIn = () => {
       if (window.google && window.google.accounts) {
         window.google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          client_id: googleClientId,
           callback: handleGoogleSignIn,
           auto_select: false,
           cancel_on_tap_outside: false
@@ -86,7 +99,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
     }
 
     loadGoogleScript()
-  }, [handleGoogleSignIn])
+  }, [googleClientId, handleGoogleSignIn, t])
 
   useEffect(() => {
     if (googleLoaded && window.google && window.google.accounts) {
@@ -105,6 +118,32 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
       }
     }
   }, [googleLoaded, isLogin])
+
+  useEffect(() => {
+    const loadDepartmentOptions = async () => {
+      try {
+        const response = await fetch('/departamentos.json')
+        if (!response.ok) {
+          throw new Error('No se pudo cargar departamentos.json')
+        }
+
+        const geoJson = await response.json()
+        const names = Array.isArray(geoJson?.features)
+          ? geoJson.features
+            .map((feature) => feature?.properties?.NAM)
+            .filter((name) => typeof name === 'string' && name.trim().length > 0)
+          : []
+
+        const uniqueNames = [...new Set(names)].sort((a, b) => a.localeCompare(b, 'es'))
+        setDepartmentOptions(uniqueNames)
+      } catch (loadError) {
+        console.error('Error cargando opciones de departamento:', loadError)
+        setDepartmentOptions([])
+      }
+    }
+
+    loadDepartmentOptions()
+  }, [])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -168,7 +207,13 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
           }, 1500)
         }
       } else {
-        const result = await register(formData.username, formData.email, formData.nombre, formData.password)
+        const result = await register(
+          formData.username,
+          formData.email,
+          formData.nombre,
+          formData.password,
+          formData.departamentoPreferencia || null
+        )
         if (result.success) {
           setSuccess(t('auth.registerSuccess'))
           setTimeout(() => {
@@ -177,6 +222,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
               username: formData.username,
               email: '',
               nombre: '',
+              departamentoPreferencia: '',
               password: '',
               confirmPassword: ''
             })
@@ -195,6 +241,7 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
       username: '',
       email: '',
       nombre: '',
+      departamentoPreferencia: '',
       password: '',
       confirmPassword: ''
     })
@@ -271,6 +318,23 @@ const Auth = ({ onClose, initialMode = 'login' }) => {
                 disabled={loading}
                 icon={userIcon}
               />
+
+              <div className="auth-select-wrapper">
+                <select
+                  name="departamentoPreferencia"
+                  className="auth-select"
+                  value={formData.departamentoPreferencia}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                >
+                  <option value="">{t('auth.departmentOptionalPlaceholder')}</option>
+                  {departmentOptions.map((departmentName) => (
+                    <option key={departmentName} value={departmentName}>
+                      {departmentName}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </>
           )}
 

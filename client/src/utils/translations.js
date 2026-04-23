@@ -49,6 +49,8 @@ const translations = {
     auth: {
       googleLoginSuccess: 'Login con Google exitoso',
       googleLoginError: 'Error al procesar login con Google',
+      googleClientIdMissing: 'Falta configurar VITE_GOOGLE_CLIENT_ID en el cliente',
+      googleCredentialMissing: 'Google no devolvio credenciales. Revisa la configuracion de Google Sign-In',
       usernameRequired: 'El nombre de usuario es requerido',
       emailRequired: 'El email es requerido',
       invalidEmail: 'Por favor ingresa un email valido',
@@ -66,6 +68,7 @@ const translations = {
       usernamePlaceholder: 'Usuario',
       emailPlaceholder: 'Email',
       fullNamePlaceholder: 'Nombre completo',
+      departmentOptionalPlaceholder: 'Departamento (opcional)',
       passwordPlaceholder: 'Contrasena',
       confirmPasswordPlaceholder: 'Confirmar contrasena',
       processing: 'Procesando...',
@@ -180,6 +183,8 @@ const translations = {
     auth: {
       googleLoginSuccess: 'Google login successful',
       googleLoginError: 'Error processing Google login',
+      googleClientIdMissing: 'VITE_GOOGLE_CLIENT_ID is missing in the client configuration',
+      googleCredentialMissing: 'Google did not return credentials. Check Google Sign-In configuration',
       usernameRequired: 'Username is required',
       emailRequired: 'Email is required',
       invalidEmail: 'Please enter a valid email',
@@ -197,6 +202,7 @@ const translations = {
       usernamePlaceholder: 'Username',
       emailPlaceholder: 'Email',
       fullNamePlaceholder: 'Full name',
+      departmentOptionalPlaceholder: 'Department (optional)',
       passwordPlaceholder: 'Password',
       confirmPasswordPlaceholder: 'Confirm password',
       processing: 'Processing...',

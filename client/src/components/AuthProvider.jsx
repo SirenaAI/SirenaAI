@@ -68,12 +68,12 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const register = async (username, email, nombre, password) => {
+  const register = async (username, email, nombre, password, departamentoPreferencia = null) => {
     try {
       setError(null)
       setLoading(true)
       
-      const response = await api.crearusuario(username, email, nombre, password)
+      const response = await api.crearusuario(username, email, nombre, password, departamentoPreferencia)
       
       if (response.message && response.usuario) {
         return { success: true, message: response.message }
