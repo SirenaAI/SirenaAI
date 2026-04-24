@@ -17,11 +17,16 @@
   cursor: not-allowed;
 }
 
+.btn:focus-visible {
+  outline: 3px solid rgba(0, 121, 145, 0.28);
+  outline-offset: 2px;
+}
+
 /* Sizes */
 .btn-small {
   padding: 8px 16px;
   font-size: 14px;
-  height: 35px;
+  min-height: 40px;
 }
 
 .btn-medium {
@@ -95,4 +100,12 @@
 .btn-icon svg {
   width: 100%;
   height: 100%;
+}
+
+@media (max-width: 768px) {
+  .btn-small,
+  .btn-medium,
+  .btn-large {
+    min-height: 44px;
+  }
 }

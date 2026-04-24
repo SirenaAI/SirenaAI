@@ -30,6 +30,9 @@ const MapApp = () => {
     setSelectedDepartment(department)
     setSearchQuery('')
     setHighlightedIndex(0)
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false)
+    }
   }
 
   const handleKeyDown = (e) => {
@@ -50,6 +53,8 @@ const MapApp = () => {
 
   return (
     <div className="map-page">
+      {sidebarOpen && <button type="button" className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} aria-label={t('mapApp.closeSidebar')} />}
+
       {/* Sidebar */}
       {sidebarOpen && (
         <aside className="sidebar">
