@@ -189,7 +189,7 @@ const Header = ({ onAuthOpen }) => {
             </div>
           </aside>
         </>
-      )
+      )}
 
       {/* Modal de autenticación */}
       {showAuth && <Auth onClose={handleCloseAuth} initialMode={authMode} />}
